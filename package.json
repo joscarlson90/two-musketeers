@@ -1,5 +1,12 @@
 {
   "scripts": {
     "test": "cd server && npm test"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.0",
+    "tailwindcss": "^4.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1"
   }
 }
