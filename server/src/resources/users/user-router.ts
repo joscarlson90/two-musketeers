@@ -63,4 +63,9 @@ userRouter.post("/logout", (req, res) => {
   res.sendStatus(204);
 });
 
+userRouter.post("/logout", (req, res) => {
+  res.clearCookie("userId");
+  res.sendStatus(204);
+});
+
 export default userRouter;
