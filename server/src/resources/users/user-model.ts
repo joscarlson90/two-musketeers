@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 export interface User {
   username: string;
@@ -12,6 +13,13 @@ const userSchema = new mongoose.Schema<User>({
   password: { type: String, required: true, select: false },
   isAdmin: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
+});
+
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) {
+    return;
+  }
+  this.password = await bcrypt.hash(String(this.password), 10);
 });
 
 export const UserModel = mongoose.model<User>("User", userSchema);
