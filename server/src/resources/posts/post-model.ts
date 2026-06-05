@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 export interface Post {
   title: string;
-  content: string;
+  image: string;
   author: mongoose.Types.ObjectId;
 }
 
@@ -13,7 +13,7 @@ const postSchema = new mongoose.Schema<Post>(
       required: true,
     },
 
-    content: {
+    image: {
       type: String,
       required: true,
     },

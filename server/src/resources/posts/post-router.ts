@@ -1,11 +1,14 @@
 import express from "express";
+import multer from "multer";
 import { PostModel } from "./post-model.ts";
 
 const postRouter = express.Router();
+const upload = multer({ dest: "uploads/" });
 
-postRouter.post("/posts", async (req, res) => {
+postRouter.post("/posts", upload.single("image"), async (req, res) => {
   const { title, content } = req.body;
   const userId = req.cookies.userId;
+  const imageFile = req.file;
 
   if (!userId) {
     return res.status(401).json("Unauthorized");
@@ -14,14 +17,14 @@ postRouter.post("/posts", async (req, res) => {
   if (!title) {
     return res.status(400).json("Title is required");
   }
-  if (!content) {
-    return res.status(400).json("Content is required");
+  if (!imageFile) {
+    return res.status(400).json("Image is required");
   }
 
   try {
     const newPost = new PostModel({
       title,
-      content,
+      image: imageFile.path,
       author: userId,
     });
 
