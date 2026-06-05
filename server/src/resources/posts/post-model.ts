@@ -4,6 +4,7 @@ export interface Post {
   title: string;
   content: string;
   author: mongoose.Types.ObjectId;
+  createdAt: Date;
 }
 
 const postSchema = new mongoose.Schema<Post>({
@@ -21,6 +22,10 @@ const postSchema = new mongoose.Schema<Post>({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 
