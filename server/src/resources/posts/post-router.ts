@@ -1,4 +1,5 @@
 import express from "express";
+import { PostModel } from "./post-model.ts";
 
 const postRouter = express.Router();
 
@@ -15,6 +16,20 @@ postRouter.post("/posts", async (req, res) => {
   }
   if (!content) {
     return res.status(400).json("Content is required");
+  }
+
+  try {
+    const newPost = new PostModel({
+      title,
+      content,
+      author: userId,
+    });
+
+    await newPost.save();
+
+    return res.status(201).json(newPost);
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to create post", error });
   }
 });
 
