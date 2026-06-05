@@ -1,5 +1,8 @@
 {
   "scripts": {
     "test": "cd server && npm test"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0"
   }
 }
