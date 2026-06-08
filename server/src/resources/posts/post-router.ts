@@ -5,26 +5,26 @@ import { PostModel } from "./post-model.ts";
 const postRouter = express.Router();
 const upload = multer({ dest: "uploads/" });
 
-postRouter.post("/posts", upload.single("image"), async (req, res) => {
+postRouter.post("/", async (req, res) => {
   const { title, content } = req.body;
   const userId = req.cookies.userId;
-  const imageFile = req.file;
 
   if (!userId) {
     return res.status(401).json("Unauthorized");
   }
 
-  if (!title) {
+  if (typeof title !== "string") {
     return res.status(400).json("Title is required");
   }
-  if (!imageFile) {
-    return res.status(400).json("Image is required");
+
+  if (typeof content !== "string") {
+    return res.status(400).json("Content is required");
   }
 
   try {
     const newPost = new PostModel({
       title,
-      image: imageFile.path,
+      content,
       author: userId,
     });
 
@@ -34,6 +34,11 @@ postRouter.post("/posts", upload.single("image"), async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: "Failed to create post", error });
   }
+});
+
+postRouter.get("/", async (req, res) => {
+  const posts = await PostModel.find({});
+  return res.status(200).json(posts);
 });
 
 export default postRouter;
