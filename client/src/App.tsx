@@ -8,8 +8,9 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import heroImage from "@/assets/images/hero-image.jpg";
 import { motion } from "framer-motion";
+import Login from "./pages/Login";
 
-export default function Header() {
+export default function App() {
   return (
     <>
       <header className="flex items-center justify-between p-6 text-[#E6DECF] bg-[#CB3038]">
@@ -33,9 +34,9 @@ export default function Header() {
               <img src="src/assets/images/line2.svg" alt="Line" className="" />
               <a href="#" className="inline-block transition-transform duration-500 hover:scale-95">Slumpa</a>
               <img src="src/assets/images/line2.svg" alt="Line" className="" />
-              <a href="#" className="inline-block transition-transform duration-500 hover:scale-95">Bli Medlem</a>
-              <img src="src/assets/images/line2.svg" alt="Line" className="" />
               <a href="#" className="inline-block transition-transform duration-500 hover:scale-95">Admin</a>
+              <img src="src/assets/images/line2.svg" alt="Line" className="" />
+              <a href="#" className="inline-block transition-transform duration-500 hover:scale-95"><Login /></a>
               <img src="src/assets/images/line2.svg" alt="Line" className="" />
             </nav>
           </SheetContent>
@@ -75,5 +76,3 @@ export default function Header() {
     </>
   );
 }
-
-// export default App;
