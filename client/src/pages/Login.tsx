@@ -1,7 +1,63 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 export default function Login() {
+
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+
+    async function handleSubmit(e: React.FormEvent) {
+        e.preventDefault();
+
+        const response = await fetch("http://localhost:3000/api/users/login",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+
+                credentials: "include",
+                body: JSON.stringify({
+                    username,
+                    password,
+                }),
+            }
+        );
+
+        const data = await response.json();
+        console.log(data);
+    }
+
     return (
-        <div>
-            <h1>Logga In</h1>
+        <div className="relative flex min-h-screen items-center justify-center bg-[#E6DECF] px-4">
+            <div className="absolute top-30 left-1/3 z-10 -translate-x-1/2 from-[#CB3038]">
+                <img src="src/assets/images/star-vector.svg" alt="Decoration" className="absolut -top-10 -left-12 z-20 w-60 rotate-[-8deg]" />
+                <p
+                    className="absolute inset-0 flex items-center justify-center text-2xl"
+                    style={{ fontFamily: "Gaegu" }}
+                >
+                    Ny här?
+                </p>
+            </div>
+
+            <Card className="bg-[#F7F4EF] shadow-xl border border-black/5 w-full max-w-md rounded-3xl">
+                <CardHeader>
+                    <CardTitle className="text-center text-4xl mb-8">
+                        BLI MEDLEM
+                    </CardTitle>
+                </CardHeader>
+
+                <CardContent>
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                        <input type="text" className="p-2 border border-beige-300 rounded-md" placeholder="Användarnamn" value={username} onChange={(e) => setUsername(e.target.value)} />
+                        <input type="password" className="p-2 border border-gray-300 rounded-md" placeholder="Lösenord" value={password} onChange={(e) => setPassword(e.target.value)} />
+                        <Button variant="default" className="text-[#E6DECF] hover:bg-[#CB3038] hover:text-white">
+                            Logga In
+                        </Button>
+                    </form>
+                </CardContent>
+            </Card>
         </div>
     );
 }
