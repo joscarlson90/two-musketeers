@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -6,11 +7,12 @@ export default function Login() {
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
 
-        const response = await fetch("http://localhost:3000/api/users/login-page",
+        const response = await fetch("/api/users/login",
             {
                 method: "POST",
                 headers: {
@@ -27,6 +29,10 @@ export default function Login() {
 
         const data = await response.json();
         console.log(data);
+
+        if (response.ok) {
+            navigate("/create-post");
+        }
     }
 
     return (
@@ -52,7 +58,7 @@ export default function Login() {
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                         <input type="text" className="p-2 border border-beige-300 rounded-md" placeholder="Användarnamn" value={username} onChange={(e) => setUsername(e.target.value)} />
                         <input type="password" className="p-2 border border-gray-300 rounded-md" placeholder="Lösenord" value={password} onChange={(e) => setPassword(e.target.value)} />
-                        <Button variant="default" className="text-[#E6DECF] hover:bg-[#CB3038] hover:text-white">
+                        <Button type="submit" className="text-[#E6DECF] hover:bg-[#CB3038] hover:text-white">
                             Logga In
                         </Button>
                     </form>

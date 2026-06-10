@@ -15,7 +15,7 @@ export default function Register() {
 
         console.log({ username, password })
 
-        const response = await fetch("http://localhost:3000/api/users/register-page",
+        const response = await fetch("/api/users/register",
             {
                 method: "POST",
                 headers: {
@@ -50,15 +50,15 @@ export default function Register() {
                 </p>
             </div>
 
-            <Card className="bg-[#F7F4EF] shadow-xl border border-black/5 w-full max-w-md rounded-3xl min-h-[550px]">
+            <Card className="bg-[#F7F4EF] shadow-xl border border-black/5 w-full max-w-md rounded-3xl">
                 <CardHeader>
                     <CardTitle className="text-center text-4xl mb-8">
                         BLI MEDLEM
                     </CardTitle>
                 </CardHeader>
 
-                <CardContent className="flex flex-col justify-center h-full">
-                    <form onSubmit={handleSubmit} className="flex flex-col align-center gap-4">
+                <CardContent>
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                         <input type="text" className="p-2 border border-beige-300 rounded-md" placeholder="Användarnamn" value={username} onChange={(e) => setUsername(e.target.value)} />
                         <input type="password" className="p-2 border border-gray-300 rounded-md" placeholder="Lösenord" value={password} onChange={(e) => setPassword(e.target.value)} />
                         <Button type="submit" variant="default" className="text-[#E6DECF] hover:bg-[#CB3038] hover:text-white">
