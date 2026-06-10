@@ -10,7 +10,7 @@ export default function Login() {
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
 
-        const response = await fetch("http://localhost:3000/api/users/login",
+        const response = await fetch("http://localhost:3000/api/users/login-page",
             {
                 method: "POST",
                 headers: {
@@ -32,19 +32,19 @@ export default function Login() {
     return (
         <div className="relative flex min-h-screen items-center justify-center bg-[#E6DECF] px-4">
             <div className="absolute top-30 left-1/3 z-10 -translate-x-1/2 from-[#CB3038]">
-                <img src="src/assets/images/star-vector.svg" alt="Decoration" className="absolut -top-10 -left-12 z-20 w-60 rotate-[-8deg]" />
+                <img src="src/assets/images/star-vector.svg" alt="Decoration" className="absolut -top-10 -left-12 z-20 w-50 md:w-60 rotate-[-8deg]" />
                 <p
-                    className="absolute inset-0 flex items-center justify-center text-2xl"
+                    className="absolute inset-0 flex items-center justify-center md:text-2xl"
                     style={{ fontFamily: "Gaegu" }}
                 >
-                    Ny här?
+
                 </p>
             </div>
 
             <Card className="bg-[#F7F4EF] shadow-xl border border-black/5 w-full max-w-md rounded-3xl">
                 <CardHeader>
                     <CardTitle className="text-center text-4xl mb-8">
-                        BLI MEDLEM
+                        LOGGA IN
                     </CardTitle>
                 </CardHeader>
 
