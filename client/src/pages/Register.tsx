@@ -1,15 +1,19 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 
 
 export default function Register() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
+
+        console.log({ username, password })
 
         const response = await fetch("http://localhost:3000/api/users/register-page",
             {
@@ -28,8 +32,11 @@ export default function Register() {
 
         const data = await response.json();
         console.log(data);
-    }
 
+        if (response.ok) {
+            navigate("/login-page")
+        }
+    }
 
     return (
         <div className="relative flex min-h-screen items-center justify-center bg-[#E6DECF] px-4">
@@ -43,18 +50,18 @@ export default function Register() {
                 </p>
             </div>
 
-            <Card className="bg-[#F7F4EF] shadow-xl border border-black/5 w-full max-w-md rounded-3xl">
+            <Card className="bg-[#F7F4EF] shadow-xl border border-black/5 w-full max-w-md rounded-3xl min-h-[550px]">
                 <CardHeader>
                     <CardTitle className="text-center text-4xl mb-8">
                         BLI MEDLEM
                     </CardTitle>
                 </CardHeader>
 
-                <CardContent>
-                    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <CardContent className="flex flex-col justify-center h-full">
+                    <form onSubmit={handleSubmit} className="flex flex-col align-center gap-4">
                         <input type="text" className="p-2 border border-beige-300 rounded-md" placeholder="Användarnamn" value={username} onChange={(e) => setUsername(e.target.value)} />
                         <input type="password" className="p-2 border border-gray-300 rounded-md" placeholder="Lösenord" value={password} onChange={(e) => setPassword(e.target.value)} />
-                        <Button variant="default" className="text-[#E6DECF] hover:bg-[#CB3038] hover:text-white">
+                        <Button type="submit" variant="default" className="text-[#E6DECF] hover:bg-[#CB3038] hover:text-white">
                             Skapa konto
                         </Button>
                     </form>
