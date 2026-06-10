@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 import {
@@ -22,26 +21,26 @@ export default function App() {
                 </h1>
 
                 <Sheet>
-                    <SheetTrigger>
-                        <Button variant="ghost" className="text-[#E6DECF] hover:bg-[#E6DECF] hover:text-black">
-                            MENY
-                        </Button>
+                    <SheetTrigger className="text-[#E6DECF] hover:bg-[#E6DECF] hover:text-black hover:rounded-3xl px-4 py-2 duration-300">
+                        MENY
                     </SheetTrigger>
-
-                    {/* Flytta alla routes hit? */}
-                    {/* Skapa en Home.tsx? för startsidankoden? */}
-                    {/* // Ändra alla a-tag till Link */}
 
                     <SheetContent side="right" className="bg-[#E6DECF]">
                         <nav className="mt-8 ml-4 mr-4 flex flex-col gap-5 text-xl">
-                            <Link to="/daily-image" className="inline-block transition-transform duration-500 hover:scale-95">Dagens Bild</Link>
+                            <Link to="/daily-image" className="inline-block transition-transform duration-500 hover:scale-95">Dagens Bild
+                                <p className="text-sm">Vår personliga favorit för dagen!</p></Link>
                             <img src="src/assets/images/line2.svg" alt="Line" className="" />
-                            <Link to="/random-image" className="inline-block transition-transform duration-500 hover:scale-95">Slumpa</Link>
-                            <img src="src/assets/images/line2.svg" alt="Line" className="" />
-                            <Link to="/admin-page" className="inline-block transition-transform duration-500 hover:scale-95">Admin</Link>
+                            <Link to="/random-image" className="inline-block transition-transform duration-500 hover:scale-95">Slumpa
+                                <p className="text-sm">Hitta en ny bild varje dag!</p>
+                            </Link>
                             <img src="src/assets/images/line2.svg" alt="Line" className="" />
                             <Link to="/login-page" className="inline-block transition-transform duration-500 hover:scale-95">Logga In</Link>
                             <img src="src/assets/images/line2.svg" alt="Line" className="" />
+                            <Link to="/register-page" className="inline-block transition-transform duration-500 hover:scale-95">Skapa Konto</Link>
+                            <img src="src/assets/images/line2.svg" alt="Line" className="" />
+                        </nav>
+                        <nav className="mt-auto mr-4 mb-6 self-end">
+                            <Link to="/admin-page" className="inline-block transition-transform duration-500 hover:scale-95">Admin</Link>
                         </nav>
                     </SheetContent>
                 </Sheet>
