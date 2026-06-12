@@ -24,7 +24,7 @@ export default function App() {
                     className="text-5xl"
                     style={{ fontFamily: "Gaegu" }}
                 >
-                    LOGO
+                    MEMORY LANE
                 </h1>
 
                 <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
@@ -36,7 +36,7 @@ export default function App() {
                     <div className="flex ml-auto items-center gap-2">
                         <Input type="search" className="w-52 bg-white text-black" placeholder="Username.." />
                         <SheetTrigger className="text-[#E6DECF] hover:bg-[#E6DECF] hover:text-black rounded-3xl px-4 py-2 duration-300">
-                            MENY
+                            MENU
                         </SheetTrigger>
                     </div>
 
