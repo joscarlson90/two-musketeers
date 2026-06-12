@@ -11,6 +11,7 @@ import heroImage from "@/assets/images/hero-image.jpg";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { enUS } from "date-fns/locale";
+import { Input } from "@/components/ui/input";
 
 
 export default function App() {
@@ -18,7 +19,7 @@ export default function App() {
 
     return (
         <>
-            <header className="flex items-center justify-between p-10 text-[#E6DECF] bg-[#CB3038]">
+            <header className="relative flex items-center p-10 text-[#E6DECF] bg-[#CB3038]">
                 <h1
                     className="text-5xl"
                     style={{ fontFamily: "Gaegu" }}
@@ -26,16 +27,18 @@ export default function App() {
                     LOGO
                 </h1>
 
-                <div className="flex justify-center gap-6">
-                    <Link to="/login-page" className="inline-block transition-transform duration-500 hover:scale-95"><Button variant="ghost">Log In</Button></Link>
-                    {/* <img src="src/assets/images/line2.svg" alt="Line" /> */}
-                    <Link to="/register-page" className="inline-block transition-transform duration-500 hover:scale-95"><Button>Become a member</Button></Link>
-                    {/* <img src="src/assets/images/line2.svg" alt="Line" /> */}
+                <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
+                    <Link to="/login-page" className="transition-transform duration-500 hover:scale-95"><Button variant="ghost" className="hover:bg-[#E6DECF]">Log In</Button></Link>
+                    <Link to="/register-page" className="transition-transform duration-500 hover:scale-95"><Button>Become a member</Button></Link>
                 </div>
+
                 <Sheet>
-                    <SheetTrigger className="text-[#E6DECF] hover:bg-[#E6DECF] hover:text-black rounded-3xl px-4 py-2 duration-300">
-                        MENY
-                    </SheetTrigger>
+                    <div className="flex ml-auto items-center gap-2">
+                        <Input type="search" className="w-52 bg-white text-black" placeholder="Username.." />
+                        <SheetTrigger className="text-[#E6DECF] hover:bg-[#E6DECF] hover:text-black rounded-3xl px-4 py-2 duration-300">
+                            MENY
+                        </SheetTrigger>
+                    </div>
 
                     <SheetContent side="right" className="bg-[#E6DECF]">
                         <nav className="mt-8 ml-4 mr-4 flex flex-col gap-5 text-xl">
@@ -59,10 +62,10 @@ export default function App() {
                 <img src={heroImage} alt="Hero Image" className="w-full h-auto object-cover" />
             </section>
 
-            <section className="relative z-10 px-10 -mt-70">
-                <div className="flex mx-auto lg:flex-row gap-8 items-start justify-between">
+            <section className="relative z-10 px-10 -mt-65">
+                <div className="mx-auto flex max-w-7xl items-start justify-center gap-30">
 
-                    <Card className="rounded-3xl shadow-2xl">
+                    <Card className="rounded-3xl shadow-2xl p-4">
                         <Calendar
                             mode="single"
                             selected={date}
@@ -85,7 +88,7 @@ export default function App() {
                         />
                     </Card>
                     <motion.div
-                        className="w-100"
+                        className="w-175"
                         initial={{ scale: 0.97 }}
                         whileInView={{ scale: 1 }}
                         viewport={{ amount: 0.3 }}
@@ -93,14 +96,14 @@ export default function App() {
                     >
                         <Card className="p-0 rounded-3xl bg-[#e6decfbc] shadow-2xl">
                             <CardHeader>
-                                <CardTitle className="text-2xl font-bold p-2">Our favorite today!</CardTitle>
+                                <CardTitle className="text-4xl font-bold p-2">Our favorite today!</CardTitle>
                             </CardHeader>
 
                             <CardContent className="pb-2 pr-2 pl-2">
                                 <img
-                                    src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZGF5JTIwaW1hZ2V8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60"
+                                    src="https://images.unsplash.com/photo-1781140435543-4e13447d9a0e?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                                     alt="Dagens bild"
-                                    className="w-full rounded-lg"
+                                    className="w-full h-100 rounded-2xlg object-cover"
                                 />
 
                                 <p className="p-2">
