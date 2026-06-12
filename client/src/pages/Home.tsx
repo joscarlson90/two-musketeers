@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-
+import * as React from "react"
+import { Calendar } from "@/components/ui/calendar"
 import {
     Sheet,
     SheetContent,
@@ -8,36 +9,47 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import heroImage from "@/assets/images/hero-image.jpg";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { enUS } from "date-fns/locale";
+import { Input } from "@/components/ui/input";
+
 
 export default function App() {
+    const [date, setDate] = React.useState<Date | undefined>(new Date());
+
     return (
         <>
-            <header className="flex items-center justify-between p-6 text-[#E6DECF] bg-[#CB3038]">
+            <header className="relative flex items-center p-10 text-[#E6DECF] bg-[#CB3038]">
                 <h1
                     className="text-5xl"
                     style={{ fontFamily: "Gaegu" }}
                 >
-                    Kamerarullen
+                    LOGO
                 </h1>
 
+                <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
+                    <Link to="/login-page" className="transition-transform duration-500 hover:scale-95"><Button variant="ghost" className="hover:bg-[#E6DECF]">Log In</Button></Link>
+                    <Link to="/register-page" className="transition-transform duration-500 hover:scale-95"><Button>Become a member</Button></Link>
+                </div>
+
                 <Sheet>
-                    <SheetTrigger className="text-[#E6DECF] hover:bg-[#E6DECF] hover:text-black hover:rounded-3xl px-4 py-2 duration-300">
-                        MENY
-                    </SheetTrigger>
+                    <div className="flex ml-auto items-center gap-2">
+                        <Input type="search" className="w-52 bg-white text-black" placeholder="Username.." />
+                        <SheetTrigger className="text-[#E6DECF] hover:bg-[#E6DECF] hover:text-black rounded-3xl px-4 py-2 duration-300">
+                            MENY
+                        </SheetTrigger>
+                    </div>
 
                     <SheetContent side="right" className="bg-[#E6DECF]">
                         <nav className="mt-8 ml-4 mr-4 flex flex-col gap-5 text-xl">
-                            <Link to="/daily-image" className="inline-block transition-transform duration-500 hover:scale-95">Dagens Bild
-                                <p className="text-sm">Vår personliga favorit för dagen!</p></Link>
-                            <img src="src/assets/images/line2.svg" alt="Line" className="" />
-                            <Link to="/random-image" className="inline-block transition-transform duration-500 hover:scale-95">Slumpa
-                                <p className="text-sm">Hitta en ny bild varje dag!</p>
+                            <Link to="/daily-image" className="inline-block transition-transform duration-500 hover:scale-95">Picture of the day
+                                <p className="text-sm">Our personal favorite of the day!</p></Link>
+                            <img src="src/assets/images/line2.svg" alt="Line" />
+                            <Link to="/random-image" className="inline-block transition-transform duration-500 hover:scale-95">Random
+                                <p className="text-sm">Find a new favorite picture every day!</p>
                             </Link>
-                            <img src="src/assets/images/line2.svg" alt="Line" className="" />
-                            <Link to="/login-page" className="inline-block transition-transform duration-500 hover:scale-95">Logga In</Link>
-                            <img src="src/assets/images/line2.svg" alt="Line" className="" />
-                            <Link to="/register-page" className="inline-block transition-transform duration-500 hover:scale-95">Skapa Konto</Link>
-                            <img src="src/assets/images/line2.svg" alt="Line" className="" />
+                            <img src="src/assets/images/line2.svg" alt="Line" />
+
                         </nav>
                         <nav className="mt-auto mr-4 mb-6 self-end">
                             <Link to="/admin-page" className="inline-block transition-transform duration-500 hover:scale-95">Admin</Link>
@@ -46,36 +58,63 @@ export default function App() {
                 </Sheet>
             </header>
 
-            <section className="h-screen">
+            <section className="relative h-[40vh]">
                 <img src={heroImage} alt="Hero Image" className="w-full h-auto object-cover" />
             </section>
 
-            <motion.div
-                initial={{ scale: 0.97 }}
-                whileInView={{ scale: 1 }}
-                viewport={{ amount: 0.3 }}
-                transition={{ duration: 1.6, ease: "easeOut" }}
-            >
-                <section className="relative z-10 mx-auto max-w-4xl px-6">
-                    <Card className="-mt-10 rounded-3xl bg-[#E6DECF] shadow-2xl">
-                        <CardHeader>
-                            <CardTitle className="text-2xl font-bold">Dagens Bild</CardTitle>
-                        </CardHeader>
+            <section className="relative z-10 px-10 -mt-65">
+                <div className="mx-auto flex max-w-7xl items-start justify-center gap-30">
 
-                        <CardContent className="p-12">
-                            <img
-                                src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZGF5JTIwaW1hZ2V8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60"
-                                alt="Dagens bild"
-                                className="w-auto rounded-lg"
-                            />
+                    <Card className="rounded-3xl shadow-2xl p-4">
+                        <Calendar
+                            mode="single"
+                            selected={date}
+                            onSelect={setDate}
+                            locale={enUS}
+                            className="rounded-lg"
+                            captionLayout="dropdown"
+                        />
+                        <Calendar
+                            mode="single"
+                            selected={date}
+                            onSelect={setDate}
+                            month={new Date(
+                                new Date().getFullYear(),
+                                new Date().getMonth() + 1
+                            )}
+                            locale={enUS}
+                            className="rounded-lg"
+                            captionLayout="dropdown"
+                        />
+                    </Card>
+                    <motion.div
+                        className="w-175"
+                        initial={{ scale: 0.97 }}
+                        whileInView={{ scale: 1 }}
+                        viewport={{ amount: 0.3 }}
+                        transition={{ duration: 1.6, ease: "easeOut" }}
+                    >
+                        <Card className="p-0 rounded-3xl bg-[#e6decfbc] shadow-2xl">
+                            <CardHeader>
+                                <CardTitle className="text-4xl font-bold p-2">Our favorite today!</CardTitle>
+                            </CardHeader>
 
-                            <p className="mt-4">
-                                En bild från vårt arkiv som vi vill lyfta fram idag.
-                            </p>
-                        </CardContent>
-                    </Card >
-                </section >
-            </motion.div>
+                            <CardContent className="pb-2 pr-2 pl-2">
+                                <img
+                                    src="https://images.unsplash.com/photo-1781140435543-4e13447d9a0e?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                    alt="Dagens bild"
+                                    className="w-full h-100 rounded-2xlg object-cover"
+                                />
+
+                                <p className="p-2">
+                                    En bild från vårt arkiv som vi vill lyfta fram idag.
+                                </p>
+                            </CardContent>
+                        </Card >
+                    </motion.div>
+
+                </div>
+            </section >
         </>
     );
 }
