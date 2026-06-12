@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 export default function Register() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
     const navigate = useNavigate();
 
 
@@ -31,6 +32,13 @@ export default function Register() {
             }
         );
 
+
+        if (!response.ok) {
+            const error = await response.json();
+            setError(error);
+            return;
+        }
+
         const data = await response.json();
         console.log(data);
 
@@ -48,7 +56,7 @@ export default function Register() {
                     style={{ fontFamily: "Gaegu" }}
                 >
                     <Link to="/register-page" className="text-sm">
-                        New here?
+                        Already a member?
                     </Link>
                 </p>
             </div>
@@ -64,9 +72,13 @@ export default function Register() {
                     <form onSubmit={handleSubmit} className="flex flex-col gap-8">
                         <Input type="text" className="bg-white border-[#D8CDBA] focus-visible:ring-[#CB3038]" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
                         <Input type="password" className="bg-white border-[#D8CDBA] focus-visible:ring-[#CB3038]" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                        <Button type="submit" variant="default" className="bg-[#CB3038] text-white hover:bg-[#A8262D]">
+                        <Button type="submit" disabled={!username || !password} variant="default" className="bg-[#CB3038] text-white hover:bg-[#A8262D]">
                             Create account
                         </Button>
+
+                        {error && (
+                            <p className="text-red-500 text-sm">{error}</p>
+                        )}
                     </form>
                 </CardContent>
             </Card>
