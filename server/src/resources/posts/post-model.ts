@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 export interface Post {
   title: string;
   content: string;
+  image?: string;
   author: mongoose.Types.ObjectId;
 }
 
@@ -16,6 +17,11 @@ const postSchema = new mongoose.Schema<Post>(
       type: String,
       required: true,
     },
+
+    image: {
+      type: String,
+    },
+
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
