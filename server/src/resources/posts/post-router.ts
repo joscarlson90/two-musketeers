@@ -65,15 +65,11 @@ postRouter.post("/", async (req, res) => {
 
 postRouter.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { title, content } = req.body;
+  const { title, content, author } = req.body;
   const userId = req.cookies.userId;
 
   if (!userId) {
     return res.status(401).json("Unauthorized");
-  }
-
-  if (!title && !content) {
-    return res.status(400).json("Title or content is required");
   }
 
   try {
@@ -83,20 +79,43 @@ postRouter.put("/:id", async (req, res) => {
       return res.status(404).json(`${id} not found`);
     }
 
-    if (post.author.toString() !== userId) {
+    const postAuthorId =
+      (post.author as any)?._id?.toString?.() ??
+      (post.author as any)?.toString?.();
+
+    if (postAuthorId !== userId) {
       return res.status(403).json("You can only edit your own posts");
     }
 
-    const updates: any = {};
-    if (title) updates.title = title;
-    if (content) updates.content = content;
+    const required = ["title", "content", "author"];
+    for (const key of required) {
+      if (!(key in req.body)) return res.status(400).json(`${key} is required`);
+    }
 
-    post.set(updates);
+    if (typeof title !== "string") {
+      return res.status(400).json("title must be a string");
+    }
+    if (typeof content !== "string") {
+      return res.status(400).json("content must be a string");
+    }
+
+    const getAuthorId = (a: any) => {
+      if (typeof a === "string") return a;
+      if (a && typeof a === "object" && typeof a._id === "string") return a._id;
+      return null;
+    };
+    const authorId = getAuthorId(author);
+    if (!authorId)
+      return res.status(400).json("author must be a string or object with _id");
+    if (authorId !== userId) return res.status(400).json("author mismatch");
+
+    post.title = title;
+    post.content = content;
+
     await post.save();
-
     return res.status(200).json(post);
   } catch (error) {
-    if (error instanceof Error && error.name === "ValidationError") {
+    if (error instanceof mongoose.Error.ValidationError) {
       return res.status(400).json(error.message);
     }
     return res.status(500).json({ message: "Failed to update post", error });
