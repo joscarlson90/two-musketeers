@@ -1,0 +1,26 @@
+### Register
+POST http://localhost:3000/api/users/register
+Content-Type: application/json
+
+{"username":"user@plugga.se","password":"123123"}
+
+### Login (stores cookie)
+POST http://localhost:3000/api/users/login
+Content-Type: application/json
+
+{"username":"user@plugga.se","password":"123123"}
+
+### Get posts (uses cookie from login)
+GET http://localhost:3000/api/posts
+
+### Create post (requires cookie)
+POST http://localhost:3000/api/posts
+Content-Type: application/json
+
+{"title":"Test","content":"Hello"}
+
+### Update post (include author from the post or /api/users/me)
+PUT http://localhost:3000/api/posts/{{POST_ID}}
+Content-Type: application/json
+
+{"title":"New","content":"Updated","author":"<AUTHOR_ID>"}
