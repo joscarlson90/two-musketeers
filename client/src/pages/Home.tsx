@@ -147,6 +147,13 @@ export default function App() {
                     <CardTitle>{selectedPost.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
+                    {selectedPost.image && (
+                      <img
+                        src={selectedPost.image}
+                        alt={selectedPost.title}
+                        className="w-full h-64 rounded-2xl object-cover mb-4"
+                      />
+                    )}
                     <p>{selectedPost.content}</p>
                     <p className="text-sm text-muted">
                       {selectedPost.author?.username || selectedPost.author} —{" "}
