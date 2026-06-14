@@ -35,6 +35,7 @@ export default function App() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [date, setDate] = React.useState<Date | undefined>(new Date());
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [randomImage, setRandomImage] = useState("https://plus.unsplash.com/premium_photo-1761928313247-03dd441591d6?q=80&w=770&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
 
     useEffect(() => {
         async function getUser() {
@@ -71,6 +72,16 @@ export default function App() {
         setIsMenuOpen(false);
         navigate("/");
     }
+
+    useEffect(() => {
+        async function getRandomDailyImage() {
+            const response = await fetch(`https://api.unsplash.com/photos/random?query=nature&client_id=${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`);
+            const data = await response.json();
+
+            setRandomImage(data.urls?.regular);
+        }
+        getRandomDailyImage();
+    }, []);
 
     return (
         <>
@@ -183,7 +194,7 @@ export default function App() {
 
                                     <CardContent className="p-4">
                                         <img
-                                            src="https://images.unsplash.com/photo-1781140435543-4e13447d9a0e?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                            src={randomImage}
                                             alt="Dagens bild"
                                             className="w-full h-100 rounded-2xlg object-cover"
                                         />
@@ -238,7 +249,7 @@ export default function App() {
                     </div>
 
                     <div className="mt-8 border-t border-[#faf3e7]/20 pt-6 text-center text-sm opacity-70">
-                        © 2025 Memory Lane • Josefine Carlson & Love Tampöld
+                        © 2026 Memory Lane • Josefine Carlson & Love Tampöld
                     </div>
                 </footer >
             </div >
