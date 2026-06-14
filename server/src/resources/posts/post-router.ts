@@ -1,7 +1,7 @@
+import busboy from "busboy";
 import express from "express";
-import mongoose from "mongoose";
-import busboy from "busboy"
 import fs from "fs";
+import mongoose from "mongoose";
 import path from "path";
 import { PostModel } from "./post-model.ts";
 
@@ -9,15 +9,17 @@ const postRouter = express.Router();
 
 const toObjectId = (id: string) => new mongoose.Types.ObjectId(id);
 
-const saveUploadedFile = async (stream: NodeJS.ReadableStream): Promise<string> => {
+const saveUploadedFile = async (
+  stream: NodeJS.ReadableStream,
+): Promise<string> => {
   const uploadDir = path.join(process.cwd(), "uploads");
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
   }
-  
+
   const filename = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   const filepath = path.join(uploadDir, filename);
-  
+
   return new Promise((resolve, reject) => {
     const writeStream = fs.createWriteStream(filepath);
     stream.pipe(writeStream);
@@ -26,7 +28,7 @@ const saveUploadedFile = async (stream: NodeJS.ReadableStream): Promise<string> 
   });
 };
 
-postRouter.get("/posts", async (req, res) => {
+postRouter.get("/", async (req, res) => {
   try {
     const posts = await PostModel.find().populate("author");
     return res.status(200).json(posts);
@@ -35,7 +37,7 @@ postRouter.get("/posts", async (req, res) => {
   }
 });
 
-postRouter.get("posts/:id", async (req, res) => {
+postRouter.get("/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -51,11 +53,34 @@ postRouter.get("posts/:id", async (req, res) => {
   }
 });
 
-postRouter.post("/posts", async (req, res) => {
+postRouter.post("/", async (req, res) => {
   const userId = req.cookies.userId;
 
   if (!userId) {
     return res.status(401).json("Unauthorized");
+  }
+
+  if (req.is("application/json")) {
+    const { title, content } = req.body;
+
+    if (!title) return res.status(400).json("Title is required");
+    if (!content) return res.status(400).json("Content is required");
+
+    try {
+      const newPost = new PostModel({
+        title,
+        content,
+        author: toObjectId(userId),
+      });
+
+      await newPost.save();
+      return res.status(201).json(newPost);
+    } catch (error) {
+      if (error instanceof Error && error.name === "ValidationError") {
+        return res.status(400).json(error.message);
+      }
+      return res.status(400).json({ message: "Failed to create post", error });
+    }
   }
 
   const bb = busboy({ headers: req.headers });
@@ -107,7 +132,7 @@ postRouter.post("/posts", async (req, res) => {
   req.pipe(bb);
 });
 
-postRouter.put("posts/:id", async (req, res) => {
+postRouter.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { title, content, author } = req.body;
   const userId = req.cookies.userId;
@@ -166,7 +191,7 @@ postRouter.put("posts/:id", async (req, res) => {
   }
 });
 
-postRouter.delete("posts/:id", async (req, res) => {
+postRouter.delete("/:id", async (req, res) => {
   const { id } = req.params;
   const userId = req.cookies.userId;
 
