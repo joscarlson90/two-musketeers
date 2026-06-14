@@ -48,7 +48,7 @@ export default function Register() {
     }
 
     return (
-        <div className="relative flex min-h-screen items-center justify-center bg-[#E6DECF] px-4">
+        <div className="relative flex min-h-screen items-center justify-center bg-[#faf3e7] px-4">
             <div className="absolute top-24 left-1/4 z-10 -translate-x-1/2 from-[#CB3038]">
                 <img src="src/assets/images/star-vector.svg" alt="Decoration" className="absolut -top-10 -left-12 z-20 w-50 md:w-60 rotate-[-8deg]" />
                 <p

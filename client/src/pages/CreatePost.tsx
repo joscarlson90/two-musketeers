@@ -80,7 +80,7 @@ export default function CreatePost() {
               onChange={(e) => setContent(e.target.value)}
             />
 
-            <Button type="submit" className="w-full text-[#E6DECF] hover:bg-[#CB3038] hover:text-white">
+            <Button type="submit" className="w-full text-[#faf3e7] hover:bg-[#CB3038] hover:text-white">
               Publish
             </Button>
           </form>
