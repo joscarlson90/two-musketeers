@@ -9,37 +9,40 @@ import { motion } from "framer-motion";
 import * as React from "react";
 import { Link } from "react-router-dom";
 
-interface Post {
-  _id: string;
-  title: string;
-  content: string;
-  image?: string;
-  author: { _id: string; username: string };
-  createdAt: string;
-}
-
 export default function App() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
-  const [posts, setPosts] = React.useState<Post[]>([]);
-  const [loading, setLoading] = React.useState(true);
+  const [posts, setPosts] = React.useState<any[]>([]);
+  const [selectedPost, setSelectedPost] = React.useState<any | null>(null);
 
   React.useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/api/posts");
-        if (response.ok) {
-          const data = await response.json();
-          setPosts(data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch posts:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPosts();
+    async function load() {
+      const res = await fetch("/api/posts", { credentials: "include" });
+      if (!res.ok) return;
+      const data = await res.json();
+      setPosts(data);
+    }
+    load();
   }, []);
+
+  const isSameDay = (a?: string | Date, b?: Date) => {
+    if (!a || !b) return false;
+    const d1 = new Date(a);
+    return (
+      d1.getFullYear() === b.getFullYear() &&
+      d1.getMonth() === b.getMonth() &&
+      d1.getDate() === b.getDate()
+    );
+  };
+
+  const handleDateSelect = (d: Date | undefined) => {
+    setDate(d);
+    if (!d) {
+      setSelectedPost(null);
+      return;
+    }
+    const match = posts.find((p) => isSameDay(p.createdAt, d));
+    setSelectedPost(match ?? null);
+  };
 
   return (
     <>
@@ -124,65 +127,40 @@ export default function App() {
             <Calendar
               mode="single"
               selected={date}
-              onSelect={setDate}
-              locale={enUS}
-              className="rounded-lg"
-              captionLayout="dropdown"
-            />
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={setDate}
-              month={
-                new Date(new Date().getFullYear(), new Date().getMonth() + 1)
-              }
+              onSelect={(d) => handleDateSelect(d)}
               locale={enUS}
               className="rounded-lg"
               captionLayout="dropdown"
             />
           </Card>
-
-          <div className="flex-1">
-            {loading ? (
-              <p className="text-center">Loading posts...</p>
-            ) : posts.length === 0 ? (
-              <p className="text-center">No posts found</p>
-            ) : (
-              <div className="grid grid-cols-1 gap-6">
-                {posts.map((post) => (
-                  <motion.div
-                    key={post._id}
-                    initial={{ scale: 0.97 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ amount: 0.3 }}
-                    transition={{ duration: 1.6, ease: "easeOut" }}
-                  >
-                    <Card className="p-0 rounded-3xl bg-[#e6decfbc] shadow-2xl">
-                      <CardHeader>
-                        <CardTitle className="text-2xl font-bold">
-                          {post.title}
-                        </CardTitle>
-                        <p className="text-sm text-gray-600">
-                          by {post.author.username}
-                        </p>
-                      </CardHeader>
-
-                      <CardContent>
-                        {post.image && (
-                          <img
-                            src={`http://localhost:3000${post.image}`}
-                            alt={post.title}
-                            className="w-full h-64 rounded-2xl object-cover mb-4"
-                          />
-                        )}
-                        <p className="p-2">{post.content}</p>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </div>
+          <motion.div
+            className="w-175"
+            initial={{ scale: 0.97 }}
+            whileInView={{ scale: 1 }}
+            viewport={{ amount: 0.3 }}
+            transition={{ duration: 1.6, ease: "easeOut" }}
+          >
+            <div className="mt-6 mx-auto max-w-3xl">
+              {selectedPost ? (
+                <Card className="p-4">
+                  <CardHeader>
+                    <CardTitle>{selectedPost.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p>{selectedPost.content}</p>
+                    <p className="text-sm text-muted">
+                      {selectedPost.author?.username || selectedPost.author} —{" "}
+                      {new Date(selectedPost.createdAt).toLocaleString()}
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <p className="text-center bg-gray-500">
+                  No post for that date.
+                </p>
+              )}
+            </div>
+          </motion.div>
         </div>
       </section>
     </>
