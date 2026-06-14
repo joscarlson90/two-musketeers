@@ -58,9 +58,22 @@ userRouter.post("/login", async (req, res) => {
   });
 });
 
-userRouter.post("/logout", (req, res) => {
-  res.clearCookie("userId");
-  res.sendStatus(204);
+userRouter.get("/my-page", async (req, res) => {
+  const userId = req.cookies.userId;
+
+  if (!userId) {
+    return res.status(401).json("Not logged in");
+  }
+  const user = await UserModel.findById(userId);
+
+  if (!user) {
+    return res.status(404).json("User not found");
+  }
+  res.status(200).json({
+    _id: user._id,
+    username: user.username,
+    isAdmin: user.isAdmin,
+  });
 });
 
 userRouter.post("/logout", (req, res) => {

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as React from "react"
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -22,10 +22,31 @@ interface Post {
     author: string;
 }
 
+interface User {
+    _id: string;
+    username: string;
+    isAdmin: boolean;
+}
+
 
 export default function App() {
+    const [user, setUser] = useState<User | null>(null);
     const [posts, setPosts] = useState<Post[]>([]);
     const [date, setDate] = React.useState<Date | undefined>(new Date());
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    useEffect(() => {
+        async function getUser() {
+            const response = await fetch("/api/users/my-page", {
+                credentials: "include",
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setUser(data);
+            }
+        }
+        getUser();
+    }, []);
 
     useEffect(() => {
         async function getPosts() {
@@ -38,6 +59,18 @@ export default function App() {
         getPosts();
     }, []);
 
+    const navigate = useNavigate();
+
+    async function handleLogout() {
+        await fetch("/api/users/logout", {
+            method: "POST",
+            credentials: "include",
+        });
+        setUser(null);
+        setIsMenuOpen(false);
+        navigate("/");
+    }
+
     return (
         <>
             <header className="flex relative items-center lg:items-center lg:flex-row p-6 justify-between text-[#faf3e7] bg-[#CB3038]">
@@ -48,12 +81,32 @@ export default function App() {
                     MEMORY LANE
                 </h1>
 
+
                 <div className="absolute flex items-center left-1/2 -translate-x-1/2 gap-3">
-                    <Link to="/login-page" className="transition-transform duration-500 hover:scale-95"><Button variant="ghost" className="hover:bg-[#faf3e7]">Log In</Button></Link>
-                    <Link to="/register-page" className="transition-transform duration-500 hover:scale-95"><Button>Become a member</Button></Link>
+                    {user ? (
+                        <>
+                            <p className="font-semibold">
+                                Hello {user.username}!
+                            </p>
+
+                            <Link to="/create-post">
+                                <Button>Create a new post</Button>
+                            </Link>
+                        </>
+                    ) : (
+                        <>
+                            <Link to="/login-page">
+                                <Button variant="ghost">Log In</Button>
+                            </Link>
+
+                            <Link to="/register-page">
+                                <Button>Become a member</Button>
+                            </Link>
+                        </>
+                    )}
                 </div>
 
-                <Sheet>
+                <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                     <div className="flex ml-auto items-center gap-2">
                         <Input type="search" className="w-52 bg-white text-black" placeholder="Username.." />
                         <SheetTrigger className="text-[#faf3e7] hover:bg-[#faf3e7] hover:text-black rounded-3xl px-4 py-2 duration-300">
@@ -72,8 +125,12 @@ export default function App() {
                             <img src="src/assets/images/line2.svg" alt="Line" />
 
                         </nav>
-                        <nav className="mt-auto mr-4 mb-6 self-end">
-                            <Link to="/admin-page" className="inline-block transition-transform duration-500 hover:scale-95">Admin</Link>
+                        <nav className="flex align-center mt-auto mb-6 justify-evenly">
+                            {user && (
+                                <Button onClick={handleLogout}>Log out</Button>
+                            )}
+                            <Link to="/admin-page" className="flex items-center transition-transform duration-500 hover:scale-110">Admin</Link>
+
                         </nav>
                     </SheetContent>
                 </Sheet>

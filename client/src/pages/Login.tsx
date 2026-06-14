@@ -32,7 +32,7 @@ export default function Login() {
         console.log(data);
 
         if (response.ok) {
-            navigate("/create-post");
+            navigate("/");
         }
     }
 
