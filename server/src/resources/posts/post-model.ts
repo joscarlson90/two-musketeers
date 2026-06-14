@@ -13,7 +13,6 @@ const postSchema = new mongoose.Schema<Post>(
       type: String,
       required: true,
     },
-
     content: {
       type: String,
       required: true,
