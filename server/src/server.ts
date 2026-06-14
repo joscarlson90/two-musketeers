@@ -1,14 +1,12 @@
-// HÄR SKRIVER NI KODEN FÖR ATT ANSLUTA TILL DATABASEN OCH STARTA SERVERN!
-
-import { app } from "./app.ts";
+import "dotenv/config";
 import mongoose from "mongoose";
+import { app } from "./app.ts";
 
-const port = process.env.PORT ?? 3000;
-const dbURL =
-  process.env.DATABASE_URL ?? "mongodb://localhost:27017/file-storage";
+const PORT = process.env.PORT || 3000;
 
-await mongoose.connect(dbURL);
+await mongoose.connect(process.env.MONGODB_URL!);
+console.log("Connected to database");
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on port http://localhost:${PORT}`);
 });
