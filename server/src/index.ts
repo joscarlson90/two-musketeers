@@ -1,9 +1,5 @@
-// DEN HÄR FILEN MÅSTE REDIGERAS AV DIG SOM STUDENT
-// SÅ ATT TESTERNA KAN LÄSA DIN KOD KORREKT.
-
-// ÄNDRA INTE FÖLJANDE KOD!
 export * from "./app.ts";
-// ÄNDRA FÖLJANDE KOD SÅ ATT DINA MODELLER OCH TYPER EXPORTERAS KORREKT:
+
 export type { Post } from "./resources/posts/post-model.ts";
 export { PostModel } from "./resources/posts/post-model.ts";
 export type { User } from "./resources/users/user-model.ts";

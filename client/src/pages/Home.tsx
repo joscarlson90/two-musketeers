@@ -40,7 +40,6 @@ export default function App() {
     useEffect(() => {
         async function getUser() {
             const response = await fetch("/api/users/my-page", {
-                credentials: "include",
             });
             if (response.ok) {
                 const data = await response.json();
@@ -66,7 +65,6 @@ export default function App() {
     async function handleLogout() {
         await fetch("/api/users/logout", {
             method: "POST",
-            credentials: "include",
         });
         setUser(null);
         setIsMenuOpen(false);
