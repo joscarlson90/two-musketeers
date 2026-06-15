@@ -38,57 +38,57 @@ interface MockedPost {
 }
 const mockedPosts: MockedPost[] = [{
     _id: "1",
-    title: "Sommaren i Bohuslän",
+    title: "Summer in Greece",
     content:
-        "En varm julidag vid havet. Vi åt räkor på bryggan och såg solen gå ner över klipporna.",
+        "A beautiful evening by the sea with friends, great food, and a sunset we'll never forget.",
     image:
         "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
     author: "Josefine",
 },
 {
     _id: "2",
-    title: "Första snön",
+    title: "First Snow",
     content:
-        "Vaknade till ett helt vitt landskap. Barnen sprang ut direkt för att bygga snögubbar.",
+        "The first snowfall of the year transformed the city into a winter wonderland overnight.",
     image:
         "https://images.unsplash.com/photo-1483664852095-d6cc6870702d?auto=format&fit=crop&w=1200&q=80",
     author: "Love",
 },
 {
     _id: "3",
-    title: "Midsommar på landet",
+    title: "Midsummer Celebration",
     content:
-        "Dans runt stången, jordgubbstårta och en ljummen kväll tillsammans med familjen.",
+        "A day filled with laughter, dancing, strawberries, and memories shared with family.",
     image:
         "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07",
-    author: "Josefine",
-},
-{
-    _id: "4",
-    title: "Vandring i fjällen",
-    content:
-        "En lång dag på leden som avslutades med utsikt över dalen och en kopp varm choklad.",
-    image:
-        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
     author: "Emma",
 },
 {
-    _id: "5",
-    title: "Mormors trädgård",
+    _id: "4",
+    title: "Mountain Adventure",
     content:
-        "Doften av syrener och nybakta bullar. Ett av mina starkaste barndomsminnen.",
+        "A long hike through breathtaking landscapes, ending with a spectacular view at sunset.",
+    image:
+        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+    author: "Simon",
+},
+{
+    _id: "5",
+    title: "Grandma's Garden",
+    content:
+        "The scent of flowers, homemade pastries, and warm summer afternoons from childhood.",
     image:
         "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735",
-    author: "Love",
+    author: "Maria",
 },
 {
     _id: "6",
-    title: "Roadtrip genom Sverige",
+    title: "Road Trip Across Sweden",
     content:
-        "Från Skåne till Norrland. Många timmar i bilen men ännu fler fina stopp längs vägen.",
+        "Thousands of kilometers, countless stops, and unforgettable moments along the way.",
     image:
         "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429",
-    author: "Josefine",
+    author: "Sigge",
 }]
 
 
