@@ -29,6 +29,68 @@ interface User {
     isAdmin: boolean;
 }
 
+interface MockedPost {
+    _id: string;
+    title: string;
+    content: string;
+    image: string;
+    author: string;
+}
+const mockedPosts: MockedPost[] = [{
+    _id: "1",
+    title: "Sommaren i Bohuslän",
+    content:
+        "En varm julidag vid havet. Vi åt räkor på bryggan och såg solen gå ner över klipporna.",
+    image:
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+    author: "Josefine",
+},
+{
+    _id: "2",
+    title: "Första snön",
+    content:
+        "Vaknade till ett helt vitt landskap. Barnen sprang ut direkt för att bygga snögubbar.",
+    image:
+        "https://images.unsplash.com/photo-1483664852095-d6cc6870702d?auto=format&fit=crop&w=1200&q=80",
+    author: "Love",
+},
+{
+    _id: "3",
+    title: "Midsommar på landet",
+    content:
+        "Dans runt stången, jordgubbstårta och en ljummen kväll tillsammans med familjen.",
+    image:
+        "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07",
+    author: "Josefine",
+},
+{
+    _id: "4",
+    title: "Vandring i fjällen",
+    content:
+        "En lång dag på leden som avslutades med utsikt över dalen och en kopp varm choklad.",
+    image:
+        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+    author: "Emma",
+},
+{
+    _id: "5",
+    title: "Mormors trädgård",
+    content:
+        "Doften av syrener och nybakta bullar. Ett av mina starkaste barndomsminnen.",
+    image:
+        "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735",
+    author: "Love",
+},
+{
+    _id: "6",
+    title: "Roadtrip genom Sverige",
+    content:
+        "Från Skåne till Norrland. Många timmar i bilen men ännu fler fina stopp längs vägen.",
+    image:
+        "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429",
+    author: "Josefine",
+}]
+
 
 export default function App() {
     const [user, setUser] = useState<User | null>(null);
@@ -214,20 +276,26 @@ export default function App() {
                     <Carousel
                         opts={{
                             align: "start",
+                            loop: true,
                         }}
                         className="w-full max-w-5xl mx-auto"
                     >
                         <CarouselContent>
-                            {Array.from({ length: 10 }).map((_, index) => (
-                                <CarouselItem key={index} className="basis-full sm:basis-1/2 lg:basis-1/3">
+                            {mockedPosts.map((post) => (
+                                <CarouselItem key={post._id} className="basis-full sm:basis-1/2 lg:basis-1/3">
                                     <div className="p-1">
-                                        <Card>
-                                            <CardContent className="flex flex-col aspect-square p-6">
-                                                <span className="text-lg font-semibold">{posts[0]?.title}
+                                        <Card className="h-112 rounded-3xl">
+                                            <CardContent className="flex flex-col aspect-square gap-4">
+                                                <span className="text-lg font-semibold">{post.title}
                                                 </span>
-                                                <div className="flex-1">BILD</div>
-                                                <p className="mt-auto text-sm font-semibold">
-                                                    {posts[0]?.content}
+                                                <div className="flex-1">
+                                                    <img src={post.image} alt={post.title} className="w-full object-cover h-60" />
+                                                </div>
+                                                <p className="mt-auto text-sm font-medium">
+                                                    {post.content}
+                                                </p>
+                                                <p className="mt-auto text-sm font-semibold italic">
+                                                    {post.author}
                                                 </p>
                                             </CardContent>
                                         </Card>
