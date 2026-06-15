@@ -12,5 +12,3 @@ app.use("/api/users", userRouter);
 app.use("/api/login", userRouter);
 app.use("/api/logout", userRouter);
 app.use("/api/posts", postRouter);
-
-// SKRIV DIN SERVERKOD HÄR!
