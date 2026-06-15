@@ -1,18 +1,87 @@
+import { Link, useNavigate } from "react-router-dom";
+import * as React from "react"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import heroImage from "@/assets/images/hero-image.jpg";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { enUS } from "date-fns/locale";
-import { motion } from "framer-motion";
-import * as React from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Search } from "lucide-react";
+
+interface Post {
+  _id: string;
+  title: string;
+  content: string;
+  author: string;
+}
+
+interface User {
+  _id: string;
+  username: string;
+  isAdmin: boolean;
+}
+
 
 export default function App() {
+  const [user, setUser] = useState<User | null>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
-  const [posts, setPosts] = React.useState<any[]>([]);
-  const [selectedPost, setSelectedPost] = React.useState<any | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [randomImage, setRandomImage] = useState("https://plus.unsplash.com/premium_photo-1761928313247-03dd441591d6?q=80&w=770&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+
+  useEffect(() => {
+    async function getUser() {
+      const response = await fetch("/api/users/my-page", {
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data);
+      }
+    }
+    getUser();
+  }, []);
+
+  useEffect(() => {
+    async function getPosts() {
+      const response = await fetch("/api/posts");
+      const data = await response.json();
+
+      console.log("Posts:", data)
+      setPosts(data);
+    }
+    getPosts();
+  }, []);
+
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    await fetch("/api/users/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+    setUser(null);
+    setIsMenuOpen(false);
+    navigate("/");
+  }
+
+  useEffect(() => {
+    async function getRandomDailyImage() {
+      const response = await fetch(`https://api.unsplash.com/photos/random?query=nature&client_id=${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`);
+      const data = await response.json();
+
+      setRandomImage(data.urls?.regular);
+    }
+    getRandomDailyImage();
+  }, []);
 
   React.useEffect(() => {
     async function load() {
@@ -28,9 +97,176 @@ export default function App() {
     if (!a || !b) return false;
     const d1 = new Date(a);
     return (
-      d1.getFullYear() === b.getFullYear() &&
-      d1.getMonth() === b.getMonth() &&
-      d1.getDate() === b.getDate()
+      <>
+        <header className="flex relative items-center lg:items-center lg:flex-row p-6 justify-between text-[#faf3e7] bg-[#CB3038]">
+          <h1
+            className="lg:text-5xl text-3xl"
+            style={{ fontFamily: "Gaegu" }}
+          >
+            MEMORY LANE
+          </h1>
+
+
+          <div className="absolute flex items-center left-1/2 -translate-x-1/2 gap-3">
+            {user ? (
+              <>
+                <p className="font-semibold">
+                  Hello {user.username}!
+                </p>
+
+                <Link to="/create-post">
+                  <Button>Create a new post</Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link to="/login-page">
+                  <Button variant="ghost">Log In</Button>
+                </Link>
+
+                <Link to="/register-page">
+                  <Button>Become a member</Button>
+                </Link>
+              </>
+            )}
+          </div>
+
+          <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+            <div className="flex relative ml-auto items-center gap-2">
+              <Search className="absolute left-45 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+              <Input type="search" className="w-52 bg-[#faf3e7] text-black" placeholder="Username.." />
+              <SheetTrigger className="text-[#faf3e7] hover:bg-[#faf3e7] hover:text-black rounded-3xl px-4 py-2 duration-300">
+                MENU
+              </SheetTrigger>
+            </div>
+
+            <SheetContent side="right" className="bg-[#faf3e7]">
+              <nav className="mt-8 ml-4 mr-4 flex flex-col gap-5 text-xl">
+                <Link to="/daily-image" className="inline-block transition-transform duration-500 hover:scale-95">Picture of the day
+                  <p className="text-sm">Our personal favorite of the day!</p></Link>
+                <img src="src/assets/images/line2.svg" alt="Line" />
+                <Link to="/random-image" className="inline-block transition-transform duration-500 hover:scale-95">Random
+                  <p className="text-sm">Find a new favorite picture every day!</p>
+                </Link>
+                <img src="src/assets/images/line2.svg" alt="Line" />
+
+              </nav>
+              <nav className="flex align-center mt-auto mb-6 justify-evenly">
+                {user && (
+                  <Button onClick={handleLogout}>Log out</Button>
+                )}
+                <Link to="/admin-page" className="flex items-center transition-transform duration-500 hover:scale-110">Admin</Link>
+
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </header>
+
+        <div className="bg-cover bg-top" style={{ backgroundImage: `url(${heroImage})`, }}>
+          <div className="max-w-7xl mx-auto rounded-3xl p-6 lg:p-18"
+            style={{
+              backgroundImage: `url()`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}>
+            <section className="relative z-10 px-4 lg:px-10 py-10">
+              <div className="mx-auto flex flex-col lg:flex-row items-center gap-8">
+                <Card className="rounded-3xl shadow-2xl p-4 shrink-0">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    locale={enUS}
+                    className="rounded-lg"
+                    captionLayout="dropdown"
+                  />
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    month={new Date(
+                      new Date().getFullYear(),
+                      new Date().getMonth() + 1
+                    )}
+                    locale={enUS}
+                    className="rounded-lg"
+                    captionLayout="dropdown"
+                  />
+                </Card>
+                <motion.div
+                  className="w-full lg:max-w-4xl"
+                  initial={{ scale: 0.97 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ amount: 0.3 }}
+                  transition={{ duration: 1.6, ease: "easeOut" }}
+                >
+                  <Card className="p-0 rounded-3xl bg-[#faf3e7] shadow-2xl">
+                    <CardHeader>
+                      <CardTitle className="text-4xl font-bold p-4">Our favorite today!</CardTitle>
+                    </CardHeader>
+
+                    <CardContent className="p-4">
+                      <img
+                        src={randomImage}
+                        alt="Dagens bild"
+                        className="w-full h-100 rounded-2xlg object-cover"
+                      />
+
+                      <p className="p-2">
+                        An image from our archive that we want to highlight today.
+                      </p>
+                    </CardContent>
+                  </Card >
+                </motion.div>
+              </div>
+            </section>
+          </div>
+          <section className="max-w-7xl mx-auto px-4 lg:px-10 py-20">
+            <div className="text-center">
+              <h2 className="text-4xl px-8 py-2 rounded-3xl inline-block bg-black font-bold mb-4 text-white">Latest Posts</h2>
+            </div>
+
+            <Carousel
+              opts={{
+                align: "start",
+              }}
+              className="w-full max-w-5xl mx-auto"
+            >
+              <CarouselContent>
+                {Array.from({ length: 10 }).map((_, index) => (
+                  <CarouselItem key={index} className="basis-full sm:basis-1/2 lg:basis-1/3">
+                    <div className="p-1">
+                      <Card>
+                        <CardContent className="flex flex-col aspect-square p-6">
+                          <span className="text-lg font-semibold">{posts[0]?.title}
+                          </span>
+                          <div className="flex-1">BILD</div>
+                          <p className="mt-auto text-sm font-semibold">
+                            {posts[0]?.content}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          </section >
+          <footer className="w-full bg-[#CB3038] text-[#E6DECF] p-10 mt-20">
+            <div className="flex flex-col items-center gap-2">
+              <h4 className="font-semibold">Community</h4>
+              <Link to="/register-page">Become a member</Link>
+              <Link to="/login-page">Log In</Link>
+            </div>
+
+            <div className="mt-8 border-t border-[#faf3e7]/20 pt-6 text-center text-sm opacity-70">
+              © 2026 Memory Lane • Josefine Carlson & Love Tampöld
+            </div>
+          </footer >
+        </div >
+      </>
     );
   };
 

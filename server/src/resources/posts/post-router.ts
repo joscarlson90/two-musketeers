@@ -123,6 +123,7 @@ postRouter.put("/:id", async (req, res) => {
   }
 });
 
+// endast inloggad kan skapa inlägg (create)
 postRouter.delete("/:id", async (req, res) => {
   const { id } = req.params;
   const userId = req.cookies.userId;
@@ -131,6 +132,7 @@ postRouter.delete("/:id", async (req, res) => {
     return res.status(401).json("Unauthorized");
   }
 
+  // hämtar post och jämför (update)
   try {
     const post = await PostModel.findById(id);
 
@@ -138,6 +140,7 @@ postRouter.delete("/:id", async (req, res) => {
       return res.status(404).json(`${id} not found`);
     }
 
+    // (delete)
     if (post.author.toString() !== userId) {
       return res.status(403).json("You can only delete your own posts");
     }
