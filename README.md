@@ -1,4 +1,5 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/ryQlvbA2)
+
 # User Based Content
 
 ## Beskrivning
@@ -49,15 +50,15 @@ Para ihop er i grupp om två - ni väljer själva vilka ni jobbar med.
 
 **Krav för godkänt:**
 
-- [ ] Git & GitHub har använts
+- [x] Git & GitHub har använts
 - [ ] Projektmappen innehåller en README.md fil (läs ovan för mer info)
 - [ ] Uppgiften lämnas in i tid!
-- [ ] Det ska finnas minst två stycken resurser (users & posts)
-- [ ] Det ska gå att registrera sig, logga in och skapa innehåll som är kopplat till inloggad användare.
-- [ ] Endast den inloggade användaren får lov att utföra C_UD actions på sitt innehåll.
-- [ ] Innehållet ska vara synligt för alla besökare på sidan.
+- [x] Det ska finnas minst två stycken resurser (users & posts)
+- [x] Det ska gå att registrera sig, logga in och skapa innehåll som är kopplat till inloggad användare.
+- [x] Endast den inloggade användaren får lov att utföra C_UD actions på sitt innehåll.
+- [x] Innehållet ska vara synligt för alla besökare på sidan.
 - [ ] Projektet ska ha stöd för att ladda upp och visa bilder som en del av innehållet.
-- [ ] Allt innehåll ska sparas i en MongoDB databas.
+- [x] Allt innehåll ska sparas i en MongoDB databas.
 
 _Gjorda krav ska kryssar i_
 

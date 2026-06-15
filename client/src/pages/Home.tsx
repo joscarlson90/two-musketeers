@@ -14,6 +14,7 @@ import { enUS } from "date-fns/locale";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Search } from "lucide-react";
 
 interface Post {
     _id: string;
@@ -34,6 +35,7 @@ export default function App() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [date, setDate] = React.useState<Date | undefined>(new Date());
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [randomImage, setRandomImage] = useState("https://plus.unsplash.com/premium_photo-1761928313247-03dd441591d6?q=80&w=770&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
 
     useEffect(() => {
         async function getUser() {
@@ -68,6 +70,16 @@ export default function App() {
         setIsMenuOpen(false);
         navigate("/");
     }
+
+    useEffect(() => {
+        async function getRandomDailyImage() {
+            const response = await fetch(`https://api.unsplash.com/photos/random?query=nature&client_id=${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`);
+            const data = await response.json();
+
+            setRandomImage(data.urls?.regular);
+        }
+        getRandomDailyImage();
+    }, []);
 
     return (
         <>
@@ -105,8 +117,9 @@ export default function App() {
                 </div>
 
                 <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-                    <div className="flex ml-auto items-center gap-2">
-                        <Input type="search" className="w-52 bg-white text-black" placeholder="Username.." />
+                    <div className="flex relative ml-auto items-center gap-2">
+                        <Search className="absolute left-45 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                        <Input type="search" className="w-52 bg-[#faf3e7] text-black" placeholder="Username.." />
                         <SheetTrigger className="text-[#faf3e7] hover:bg-[#faf3e7] hover:text-black rounded-3xl px-4 py-2 duration-300">
                             MENU
                         </SheetTrigger>
@@ -134,8 +147,7 @@ export default function App() {
                 </Sheet>
             </header>
 
-            <div className="min-h-[130vh] bg-cover bg-top" style={{ backgroundImage: `url(${heroImage})`, }}
-            >
+            <div className="bg-cover bg-top" style={{ backgroundImage: `url(${heroImage})`, }}>
                 <div className="max-w-7xl mx-auto rounded-3xl p-6 lg:p-18"
                     style={{
                         backgroundImage: `url()`,
@@ -175,18 +187,18 @@ export default function App() {
                             >
                                 <Card className="p-0 rounded-3xl bg-[#faf3e7] shadow-2xl">
                                     <CardHeader>
-                                        <CardTitle className="text-4xl font-bold p-2">Our favorite today!</CardTitle>
+                                        <CardTitle className="text-4xl font-bold p-4">Our favorite today!</CardTitle>
                                     </CardHeader>
 
-                                    <CardContent className="pb-2 pr-2 pl-2">
+                                    <CardContent className="p-4">
                                         <img
-                                            src="https://images.unsplash.com/photo-1781140435543-4e13447d9a0e?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                            src={randomImage}
                                             alt="Dagens bild"
                                             className="w-full h-100 rounded-2xlg object-cover"
                                         />
 
                                         <p className="p-2">
-                                            En bild från vårt arkiv som vi vill lyfta fram idag.
+                                            An image from our archive that we want to highlight today.
                                         </p>
                                     </CardContent>
                                 </Card >
@@ -196,20 +208,21 @@ export default function App() {
                 </div>
                 <section className="max-w-7xl mx-auto px-4 lg:px-10 py-20">
                     <div className="text-center">
-                        <h2 className="text-4xl px-8 py-2 rounded-3xl inline-block bg-black font-bold mb-2 text-[#faf3e7]">Latest Posts</h2>
+                        <h2 className="text-4xl px-8 py-2 rounded-3xl inline-block bg-black font-bold mb-4 text-white">Latest Posts</h2>
                     </div>
+
                     <Carousel
                         opts={{
                             align: "start",
                         }}
-                        className="w-full max-w-3xl mx-auto"
+                        className="w-full max-w-5xl mx-auto"
                     >
                         <CarouselContent>
                             {Array.from({ length: 10 }).map((_, index) => (
                                 <CarouselItem key={index} className="basis-full sm:basis-1/2 lg:basis-1/3">
                                     <div className="p-1">
                                         <Card>
-                                            <CardContent className="flex flex-col h-full aspect-square p-6">
+                                            <CardContent className="flex flex-col aspect-square p-6">
                                                 <span className="text-lg font-semibold">{posts[0]?.title}
                                                 </span>
                                                 <div className="flex-1">BILD</div>
@@ -226,6 +239,17 @@ export default function App() {
                         <CarouselNext />
                     </Carousel>
                 </section >
+                <footer className="w-full bg-[#CB3038] text-[#E6DECF] p-10 mt-20">
+                    <div className="flex flex-col items-center gap-2">
+                        <h4 className="font-semibold">Community</h4>
+                        <Link to="/register-page">Become a member</Link>
+                        <Link to="/login-page">Log In</Link>
+                    </div>
+
+                    <div className="mt-8 border-t border-[#faf3e7]/20 pt-6 text-center text-sm opacity-70">
+                        © 2026 Memory Lane • Josefine Carlson & Love Tampöld
+                    </div>
+                </footer >
             </div >
         </>
     );
