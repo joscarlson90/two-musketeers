@@ -11,19 +11,28 @@ const toObjectId = (id: string) => new mongoose.Types.ObjectId(id);
 
 const saveUploadedFile = async (
   stream: NodeJS.ReadableStream,
+  filename: string,
+  mimeType: string,
 ): Promise<string> => {
   const uploadDir = path.join(process.cwd(), "uploads");
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
   }
 
-  const filename = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-  const filepath = path.join(uploadDir, filename);
+  const extMap: Record<string, string> = {
+    "image/jpeg": ".jpg",
+    "image/png": ".png",
+    "image/gif": ".gif",
+    "image/webp": ".webp",
+  };
+  const ext = extMap[mimeType] || path.extname(filename) || ".jpg";
+  const savedFilename = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}${ext}`;
+  const filepath = path.join(uploadDir, savedFilename);
 
   return new Promise((resolve, reject) => {
     const writeStream = fs.createWriteStream(filepath);
     stream.pipe(writeStream);
-    writeStream.on("finish", () => resolve(`/uploads/${filename}`));
+    writeStream.on("finish", () => resolve(`/uploads/${savedFilename}`));
     writeStream.on("error", reject);
   });
 };
@@ -86,15 +95,13 @@ postRouter.post("/", async (req, res) => {
 
   const bb = busboy({ headers: req.headers });
   const fields: any = {};
+  let imagePromise: Promise<string> | undefined;
   let imageUrl: string | undefined;
 
   bb.on("file", async (fieldname, file, info) => {
+    console.log("File received:", fieldname, info.filename);
     if (fieldname === "image") {
-      try {
-        imageUrl = await saveUploadedFile(file);
-      } catch (error) {
-        console.error("File upload error:", error);
-      }
+      imagePromise = saveUploadedFile(file, info.filename, info.mimeType);
     }
   });
 
@@ -107,6 +114,8 @@ postRouter.post("/", async (req, res) => {
 
     if (!title) return res.status(400).json("Title is required");
     if (!content) return res.status(400).json("Content is required");
+
+    const imageUrl = imagePromise ? await imagePromise : undefined;
 
     try {
       const newPost = new PostModel({
