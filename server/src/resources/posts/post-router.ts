@@ -54,7 +54,6 @@ postRouter.get("/:id", async (req, res) => {
 });
 
 postRouter.post("/", async (req, res) => {
-  const { title, content, postDate } = req.body;
   const userId = req.cookies.userId;
 
   if (!userId) {
@@ -62,21 +61,17 @@ postRouter.post("/", async (req, res) => {
   }
 
   if (req.is("application/json")) {
-    const { title, content } = req.body;
+    const { title, content, postDate } = req.body;
 
-  try {
-    const newPost = new PostModel({
-      title,
-      content,
-      author: toObjectId(userId),
-      postDate,
-    });
+    if (!title) return res.status(400).json("Title is required");
+    if (!content) return res.status(400).json("Content is required");
 
     try {
       const newPost = new PostModel({
         title,
         content,
         author: toObjectId(userId),
+        postDate,
       });
 
       await newPost.save();
@@ -108,7 +103,7 @@ postRouter.post("/", async (req, res) => {
   });
 
   bb.on("close", async () => {
-    const { title, content } = fields;
+    const { title, content, postDate } = fields;
 
     if (!title) return res.status(400).json("Title is required");
     if (!content) return res.status(400).json("Content is required");
@@ -119,6 +114,7 @@ postRouter.post("/", async (req, res) => {
         content,
         image: imageUrl,
         author: toObjectId(userId),
+        postDate,
       });
 
       await newPost.save();
