@@ -1,10 +1,32 @@
+import busboy from "busboy";
 import express from "express";
+import fs from "fs";
 import mongoose from "mongoose";
+import path from "path";
 import { PostModel } from "./post-model.ts";
 
 const postRouter = express.Router();
 
 const toObjectId = (id: string) => new mongoose.Types.ObjectId(id);
+
+const saveUploadedFile = async (
+  stream: NodeJS.ReadableStream,
+): Promise<string> => {
+  const uploadDir = path.join(process.cwd(), "uploads");
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+
+  const filename = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const filepath = path.join(uploadDir, filename);
+
+  return new Promise((resolve, reject) => {
+    const writeStream = fs.createWriteStream(filepath);
+    stream.pipe(writeStream);
+    writeStream.on("finish", () => resolve(`/uploads/${filename}`));
+    writeStream.on("error", reject);
+  });
+};
 
 postRouter.get("/", async (req, res) => {
   try {
@@ -32,35 +54,84 @@ postRouter.get("/:id", async (req, res) => {
 });
 
 postRouter.post("/", async (req, res) => {
-  const { title, content } = req.body;
   const userId = req.cookies.userId;
 
   if (!userId) {
     return res.status(401).json("Unauthorized");
   }
 
-  if (!title) {
-    return res.status(400).json("Title is required");
-  }
-  if (!content) {
-    return res.status(400).json("Content is required");
-  }
+  if (req.is("application/json")) {
+    const { title, content, postDate } = req.body;
 
-  try {
-    const newPost = new PostModel({
-      title,
-      content,
-      author: toObjectId(userId),
-    });
+    if (!title) return res.status(400).json("Title is required");
+    if (!content) return res.status(400).json("Content is required");
 
-    await newPost.save();
-    return res.status(201).json(newPost);
-  } catch (error) {
-    if (error instanceof Error && error.name === "ValidationError") {
-      return res.status(400).json(error.message);
+    try {
+      const newPost = new PostModel({
+        title,
+        content,
+        author: toObjectId(userId),
+        postDate,
+      });
+
+      await newPost.save();
+      return res.status(201).json(newPost);
+    } catch (error) {
+      if (error instanceof Error && error.name === "ValidationError") {
+        return res.status(400).json(error.message);
+      }
+      return res.status(400).json({ message: "Failed to create post", error });
     }
-    return res.status(400).json({ message: "Failed to create post", error });
   }
+
+  const bb = busboy({ headers: req.headers });
+  const fields: any = {};
+  let imageUrl: string | undefined;
+
+  bb.on("file", async (fieldname, file, info) => {
+    if (fieldname === "image") {
+      try {
+        imageUrl = await saveUploadedFile(file);
+      } catch (error) {
+        console.error("File upload error:", error);
+      }
+    }
+  });
+
+  bb.on("field", (fieldname, val) => {
+    fields[fieldname] = val;
+  });
+
+  bb.on("close", async () => {
+    const { title, content, postDate } = fields;
+
+    if (!title) return res.status(400).json("Title is required");
+    if (!content) return res.status(400).json("Content is required");
+
+    try {
+      const newPost = new PostModel({
+        title,
+        content,
+        image: imageUrl,
+        author: toObjectId(userId),
+        postDate,
+      });
+
+      await newPost.save();
+      return res.status(201).json(newPost);
+    } catch (error) {
+      if (error instanceof Error && error.name === "ValidationError") {
+        return res.status(400).json(error.message);
+      }
+      return res.status(400).json({ message: "Failed to create post", error });
+    }
+  });
+
+  bb.on("error", (error) => {
+    return res.status(500).json({ message: "Upload error", error });
+  });
+
+  req.pipe(bb);
 });
 
 postRouter.put("/:id", async (req, res) => {
