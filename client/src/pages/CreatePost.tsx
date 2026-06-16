@@ -25,7 +25,6 @@ export default function CreatePost() {
         body: JSON.stringify({
           title,
           content,
-          postDate: date,
         }),
       }
     );

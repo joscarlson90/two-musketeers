@@ -5,7 +5,6 @@ export interface Post {
   content: string;
   image?: string;
   author: mongoose.Types.ObjectId;
-  postDate: Date;
 }
 
 const postSchema = new mongoose.Schema<Post>(
@@ -18,18 +17,15 @@ const postSchema = new mongoose.Schema<Post>(
       type: String,
       required: true,
     },
+
     image: {
       type: String,
     },
+
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-    },
-    postDate: {
-      type: Date,
-      required: true,
-      default: Date.now,
     },
   },
   {
