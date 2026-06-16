@@ -158,6 +158,17 @@ export default function App() {
     setSelectedPost(match ?? null);
   };
 
+  async function handleDeletePost(id: string) {
+    const response = await fetch(`/api/posts/${id}`, {
+      method: "DELETE",
+    });
+    if (response.ok) {
+      setPosts((prev) => prev.filter((p) => p._id !== id));
+      setSelectedPost(null);
+      setDateSelected(false);
+    }
+  }
+
   const renderCalendarCard = () => {
     if (selectedPost) {
       return (
@@ -182,6 +193,13 @@ export default function App() {
                 : selectedPost.author}{" "}
               — {new Date(selectedPost.createdAt).toLocaleString()}
             </p>
+
+            <Button
+              variant="destructive"
+              onClick={() => handleDeletePost(selectedPost._id)}
+            >
+              Delete
+            </Button>
           </CardContent>
         </Card>
       );
