@@ -17,13 +17,30 @@ GET http://localhost:3000/api/posts
 POST http://localhost:3000/api/posts
 Content-Type: application/json
 
-{"title":"Test","content":"Hello"}
+{"title":"Test","content":"Hello",}
 
 ### Create post with image (simpler)
 POST http://localhost:3000/api/posts
-Content-Type: multipart/form-data
+Content-Type: multipart/form-data; boundary=MyBoundary
 
-title=Test Post&content=My content&image=@./path/to/image.jpg
+--MyBoundary
+Content-Disposition: form-data; name="title"
+
+Test Post
+--MyBoundary
+Content-Disposition: form-data; name="content"
+
+My content
+--MyBoundary
+Content-Disposition: form-data; name="postDate"
+
+2026-06-16
+--MyBoundary
+Content-Disposition: form-data; name="image"; filename="test.jpg"
+Content-Type: image/jpeg
+
+< /home/txmpold/Pictures/tree.png
+--MyBoundary--
 
 ### Update post 
 PUT http://localhost:3000/api/posts/{{POST_ID}}

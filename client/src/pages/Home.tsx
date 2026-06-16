@@ -16,6 +16,7 @@ interface Post {
   content: string;
   author: { username: string } | string;
   createdAt: string;
+  image?: string;
 }
 
 interface User {
