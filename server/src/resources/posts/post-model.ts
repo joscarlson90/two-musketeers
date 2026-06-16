@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 export interface Post {
   title: string;
   content: string;
+  postDate: string;
   image?: string;
   author: mongoose.Types.ObjectId;
 }
@@ -18,6 +19,10 @@ const postSchema = new mongoose.Schema<Post>(
       required: true,
     },
 
+    postDate: {
+      type: String,
+      required: true,
+    },
     image: {
       type: String,
     },
