@@ -29,6 +29,7 @@ const postSchema = new mongoose.Schema<Post>(
     postDate: {
       type: Date,
       required: true,
+      default: Date.now,
     },
   },
   {
