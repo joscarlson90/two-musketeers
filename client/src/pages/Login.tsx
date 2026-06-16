@@ -19,8 +19,6 @@ export default function Login() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-
-                credentials: "include",
                 body: JSON.stringify({
                     username,
                     password,
@@ -32,12 +30,12 @@ export default function Login() {
         console.log(data);
 
         if (response.ok) {
-            navigate("/create-post");
+            navigate("/");
         }
     }
 
     return (
-        <div className="relative flex min-h-screen items-center justify-center bg-[#E6DECF] px-4">
+        <div className="relative flex min-h-screen items-center justify-center bg-[#CB3038] px-4">
             <div className="absolute top-25 left-1/4 z-10 -translate-x-1/2 from-[#CB3038]">
                 <img src="src/assets/images/star-vector.svg" alt="Decoration" className="absolut -top-10 -left-12 z-20 w-50 md:w-60 rotate-[-8deg]" />
                 <p
@@ -47,7 +45,7 @@ export default function Login() {
 
                 </p>
             </div>
-            <Card className="bg-[#F7F4EF] shadow-2xl border border-[#D8CDBA] w-full max-w-xl rounded-3xl">
+            <Card className="bg-[#faf3e7] shadow-2xl border border-[#D8CDBA] w-full max-w-xl rounded-3xl">
                 <CardHeader>
                     <CardTitle className="text-center text-4xl mb-8">
                         Welcome back!

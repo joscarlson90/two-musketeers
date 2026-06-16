@@ -7,30 +7,86 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { enUS } from "date-fns/locale";
 import { motion } from "framer-motion";
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
+interface Post {
+  _id: string;
+  title: string;
+  content: string;
+  author: { username: string } | string;
+  createdAt: string;
+}
+
+interface User {
+  _id: string;
+  username: string;
+  isAdmin: boolean;
+}
 
 export default function App() {
+  const [user, setUser] = useState<User | null>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
-  const [posts, setPosts] = React.useState<any[]>([]);
-  const [selectedPost, setSelectedPost] = React.useState<any | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [randomImage, setRandomImage] = useState(
+    "https://plus.unsplash.com/premium_photo-1761928313247-03dd441591d6?q=80&w=770&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  );
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
-  React.useEffect(() => {
-    async function load() {
-      const res = await fetch("/api/posts", { credentials: "include" });
-      if (!res.ok) return;
-      const data = await res.json();
+  useEffect(() => {
+    async function getUser() {
+      const response = await fetch("/api/users/my-page", {
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data);
+      }
+    }
+    getUser();
+  }, []);
+
+  useEffect(() => {
+    async function getPosts() {
+      const response = await fetch("/api/posts");
+      const data = await response.json();
       setPosts(data);
     }
-    load();
+    getPosts();
   }, []);
+
+  useEffect(() => {
+    async function getRandomDailyImage() {
+      const response = await fetch(
+        `https://api.unsplash.com/photos/random?query=nature&client_id=${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`,
+      );
+      const data = await response.json();
+      setRandomImage(data.urls?.regular);
+    }
+    getRandomDailyImage();
+  }, []);
+
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    await fetch("/api/users/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+    setUser(null);
+    setIsMenuOpen(false);
+    navigate("/");
+  }
 
   const isSameDay = (a?: string | Date, b?: Date) => {
     if (!a || !b) return false;
     const d1 = new Date(a);
+    const d2 = new Date(b);
     return (
-      d1.getFullYear() === b.getFullYear() &&
-      d1.getMonth() === b.getMonth() &&
-      d1.getDate() === b.getDate()
+      d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate()
     );
   };
 
@@ -52,23 +108,30 @@ export default function App() {
         </h1>
 
         <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
-          <Link
-            to="/login-page"
-            className="transition-transform duration-500 hover:scale-95"
-          >
-            <Button variant="ghost" className="hover:bg-[#E6DECF]">
-              Log In
-            </Button>
-          </Link>
-          <Link
-            to="/register-page"
-            className="transition-transform duration-500 hover:scale-95"
-          >
-            <Button>Become a member</Button>
-          </Link>
+          {user ? (
+            <>
+              <p className="font-semibold text-[#E6DECF]">
+                Hello {user.username}!
+              </p>
+              <Link to="/create-post">
+                <Button>Create a new post</Button>
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link to="/login-page">
+                <Button variant="ghost" className="hover:bg-[#E6DECF]">
+                  Log In
+                </Button>
+              </Link>
+              <Link to="/register-page">
+                <Button>Become a member</Button>
+              </Link>
+            </>
+          )}
         </div>
 
-        <Sheet>
+        <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
           <div className="flex ml-auto items-center gap-2">
             <Input
               type="search"
@@ -101,13 +164,14 @@ export default function App() {
               </Link>
               <img src="src/assets/images/line2.svg" alt="Line" />
             </nav>
-            <nav className="mt-auto mr-4 mb-6 self-end">
+            <nav className="mt-auto mr-4 mb-6 self-end flex flex-col gap-3">
               <Link
                 to="/admin-page"
                 className="inline-block transition-transform duration-500 hover:scale-95"
               >
                 Admin
               </Link>
+              {user && <Button onClick={handleLogout}>Log out</Button>}
             </nav>
           </SheetContent>
         </Sheet>
@@ -155,14 +219,16 @@ export default function App() {
                       />
                     )}
                     <p>{selectedPost.content}</p>
-                    <p className="text-sm text-muted">
-                      {selectedPost.author?.username || selectedPost.author} —{" "}
-                      {new Date(selectedPost.createdAt).toLocaleString()}
+                    <p className="text-sm text-black">
+                      {typeof selectedPost.author === "object"
+                        ? selectedPost.author.username
+                        : selectedPost.author}{" "}
+                      — {new Date(selectedPost.createdAt).toLocaleString()}
                     </p>
                   </CardContent>
                 </Card>
               ) : (
-                <p className="text-center bg-gray-500">
+                <p className="text-center text-gray-500">
                   No post for that date.
                 </p>
               )}

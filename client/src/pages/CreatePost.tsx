@@ -5,32 +5,37 @@ import { Button } from "@/components/ui/button"
 import { enUS } from "date-fns/locale";
 import React, { useState } from "react"
 import { Calendar } from "@/components/ui/calendar";
+import { useNavigate } from "react-router-dom";
 
-// Titel, beskrivning, bild -> Publicera
 export default function CreatePost() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const response = await fetch("http://localhost:3000/api/users/posts",
+    const response = await fetch("/api/posts",
       {
         method: "POST",
-        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           title,
           content,
+          postDate: date,
         }),
       }
     );
 
     const data = await response.json();
     console.log(data);
+
+    if (response.ok) {
+      navigate("/");
+    }
   }
 
   return (
@@ -74,7 +79,7 @@ export default function CreatePost() {
               onChange={(e) => setContent(e.target.value)}
             />
 
-            <Button type="submit" className="w-full text-[#E6DECF] hover:bg-[#CB3038] hover:text-white">
+            <Button type="submit" className="w-full text-[#faf3e7] hover:bg-[#CB3038] hover:text-white">
               Publish
             </Button>
           </form>
