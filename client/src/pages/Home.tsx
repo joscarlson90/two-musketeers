@@ -25,6 +25,7 @@ interface Post {
   content: string;
   author: { username: string } | string;
   createdAt: string;
+  postDate: string;
   image?: string;
 }
 
@@ -41,6 +42,7 @@ interface MockedPost {
   image: string;
   author: string;
 }
+
 const mockedPosts: MockedPost[] = [
   {
     _id: "1",
@@ -96,6 +98,8 @@ const mockedPosts: MockedPost[] = [
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [dateSelected, setDateSelected] = useState(false);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [randomImage, setRandomImage] = useState(
@@ -117,23 +121,10 @@ export default function App() {
     async function getPosts() {
       const response = await fetch("/api/posts");
       const data = await response.json();
-
-      console.log("Posts:", data);
       setPosts(data);
     }
     getPosts();
   }, []);
-
-  const navigate = useNavigate();
-
-  async function handleLogout() {
-    await fetch("/api/users/logout", {
-      method: "POST",
-    });
-    setUser(null);
-    setIsMenuOpen(false);
-    navigate("/");
-  }
 
   useEffect(() => {
     async function getRandomDailyImage() {
@@ -141,20 +132,90 @@ export default function App() {
         `https://api.unsplash.com/photos/random?query=nature&client_id=${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`,
       );
       const data = await response.json();
-
       setRandomImage(data.urls?.regular);
     }
     getRandomDailyImage();
   }, []);
 
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    await fetch("/api/users/logout", { method: "POST" });
+    setUser(null);
+    setIsMenuOpen(false);
+    navigate("/");
+  }
+
   const handleDateSelect = (d: Date | undefined) => {
     setDate(d);
     if (!d) {
       setSelectedPost(null);
+      setDateSelected(false);
       return;
     }
-    const match = posts.find((p) => isSameDay(p.createdAt, d));
+    setDateSelected(true);
+    const match = posts.find((p) => isSameDay(new Date(p.postDate), d));
     setSelectedPost(match ?? null);
+  };
+
+  const renderCalendarCard = () => {
+    if (selectedPost) {
+      return (
+        <Card className="p-0 rounded-3xl bg-[#faf3e7] shadow-2xl">
+          <CardHeader>
+            <CardTitle className="text-4xl font-bold p-4">
+              {selectedPost.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4">
+            {selectedPost.image && (
+              <img
+                src={selectedPost.image}
+                alt={selectedPost.title}
+                className="w-full object-cover rounded-2xl mb-4"
+              />
+            )}
+            <p className="p-2">{selectedPost.content}</p>
+            <p className="p-2 text-sm italic">
+              {typeof selectedPost.author === "object"
+                ? selectedPost.author.username
+                : selectedPost.author}{" "}
+              — {new Date(selectedPost.createdAt).toLocaleString()}
+            </p>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    if (dateSelected) {
+      return (
+        <Card className="p-0 rounded-3xl bg-[#faf3e7] shadow-2xl">
+          <CardContent className="p-8 text-center">
+            <p className="text-xl text-gray-500">No posts for this date.</p>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    return (
+      <Card className="p-0 rounded-3xl bg-[#faf3e7] shadow-2xl">
+        <CardHeader>
+          <CardTitle className="text-4xl font-bold p-4">
+            Our favorite today!
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-4">
+          <img
+            src={randomImage}
+            alt="Dagens bild"
+            className="w-full h-100 object-cover rounded-2xl"
+          />
+          <p className="p-2">
+            An image from our archive that we want to highlight today.
+          </p>
+        </CardContent>
+      </Card>
+    );
   };
 
   return (
@@ -238,7 +299,6 @@ export default function App() {
         <div className="max-w-7xl mx-auto rounded-3xl p-6 lg:p-18">
           <section className="relative z-10 px-4 lg:px-10 py-10">
             <div className="mx-auto flex flex-col lg:flex-row items-center gap-8">
-              {/* Calendars */}
               <Card className="rounded-3xl shadow-2xl p-4 shrink-0">
                 <Calendar
                   mode="single"
@@ -264,7 +324,6 @@ export default function App() {
                 />
               </Card>
 
-              {/* Post for selected date OR random image */}
               <motion.div
                 className="w-full lg:max-w-4xl"
                 initial={{ scale: 0.97 }}
@@ -272,56 +331,12 @@ export default function App() {
                 viewport={{ amount: 0.3 }}
                 transition={{ duration: 1.6, ease: "easeOut" }}
               >
-                {selectedPost ? (
-                  <Card className="p-0 rounded-3xl bg-[#faf3e7] shadow-2xl">
-                    <CardHeader>
-                      <CardTitle className="text-4xl font-bold p-4">
-                        {selectedPost.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-4">
-                      {selectedPost.image && (
-                        <img
-                          src={selectedPost.image}
-                          alt={selectedPost.title}
-                          className="w-full h-100 object-cover rounded-2xl mb-4"
-                        />
-                      )}
-                      <p className="p-2">{selectedPost.content}</p>
-                      <p className="p-2 text-sm italic">
-                        {typeof selectedPost.author === "object"
-                          ? selectedPost.author.username
-                          : selectedPost.author}{" "}
-                        — {new Date(selectedPost.createdAt).toLocaleString()}
-                      </p>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  <Card className="p-0 rounded-3xl bg-[#faf3e7] shadow-2xl">
-                    <CardHeader>
-                      <CardTitle className="text-4xl font-bold p-4">
-                        Our favorite today!
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-4">
-                      <img
-                        src={randomImage}
-                        alt="Dagens bild"
-                        className="w-full h-100 object-cover rounded-2xl"
-                      />
-                      <p className="p-2">
-                        An image from our archive that we want to highlight
-                        today.
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
+                {renderCalendarCard()}
               </motion.div>
             </div>
           </section>
         </div>
 
-        {/* Carousel */}
         <section className="max-w-7xl mx-auto px-4 lg:px-10 py-20">
           <div className="text-center">
             <h2 className="text-4xl px-8 py-2 rounded-3xl inline-block bg-black font-bold mb-4 text-white">
