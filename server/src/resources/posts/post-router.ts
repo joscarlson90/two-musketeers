@@ -75,6 +75,21 @@ postRouter.post("/", async (req, res) => {
     if (!title) return res.status(400).json("Title is required");
     if (!content) return res.status(400).json("Content is required");
 
+    if (postDate) {
+      const start = new Date(postDate);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(postDate);
+      end.setHours(23, 59, 59, 999);
+
+      const existing = await PostModel.findOne({
+        postDate: { $gte: start, $lte: end },
+      } as any);
+
+      if (existing) {
+        return res.status(409).json("A post already exists for this date.");
+      }
+    }
+
     try {
       const newPost = new PostModel({
         title,
@@ -111,11 +126,25 @@ postRouter.post("/", async (req, res) => {
 
   bb.on("close", async () => {
     const { title, content, postDate } = fields;
+    const imageUrl = imagePromise ? await imagePromise : undefined;
 
     if (!title) return res.status(400).json("Title is required");
     if (!content) return res.status(400).json("Content is required");
 
-    const imageUrl = imagePromise ? await imagePromise : undefined;
+    if (postDate) {
+      const start = new Date(postDate);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(postDate);
+      end.setHours(23, 59, 59, 999);
+
+      const existing = await PostModel.findOne({
+        postDate: { $gte: start, $lte: end },
+      } as any);
+
+      if (existing) {
+        return res.status(409).json("A post already exists for this date.");
+      }
+    }
 
     try {
       const newPost = new PostModel({
