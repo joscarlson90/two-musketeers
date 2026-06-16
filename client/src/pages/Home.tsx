@@ -14,7 +14,8 @@ interface Post {
   _id: string;
   title: string;
   content: string;
-  author: string;
+  author: { username: string } | string;
+  createdAt: string;
 }
 
 interface User {
@@ -50,11 +51,20 @@ export default function App() {
     async function getPosts() {
       const response = await fetch("/api/posts");
       const data = await response.json();
-
-      console.log("Posts:", data);
       setPosts(data);
     }
     getPosts();
+  }, []);
+
+  useEffect(() => {
+    async function getRandomDailyImage() {
+      const response = await fetch(
+        `https://api.unsplash.com/photos/random?query=nature&client_id=${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`,
+      );
+      const data = await response.json();
+      setRandomImage(data.urls?.regular);
+    }
+    getRandomDailyImage();
   }, []);
 
   const navigate = useNavigate();
@@ -68,18 +78,6 @@ export default function App() {
     setIsMenuOpen(false);
     navigate("/");
   }
-
-  useEffect(() => {
-    async function getRandomDailyImage() {
-      const response = await fetch(
-        `https://api.unsplash.com/photos/random?query=nature&client_id=${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`,
-      );
-      const data = await response.json();
-
-      setRandomImage(data.urls?.regular);
-    }
-    getRandomDailyImage();
-  }, []);
 
   const isSameDay = (a?: string | Date, b?: Date) => {
     if (!a || !b) return false;
@@ -133,7 +131,7 @@ export default function App() {
           )}
         </div>
 
-        <Sheet>
+        <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
           <div className="flex ml-auto items-center gap-2">
             <Input
               type="search"
@@ -166,13 +164,14 @@ export default function App() {
               </Link>
               <img src="src/assets/images/line2.svg" alt="Line" />
             </nav>
-            <nav className="mt-auto mr-4 mb-6 self-end">
+            <nav className="mt-auto mr-4 mb-6 self-end flex flex-col gap-3">
               <Link
                 to="/admin-page"
                 className="inline-block transition-transform duration-500 hover:scale-95"
               >
                 Admin
               </Link>
+              {user && <Button onClick={handleLogout}>Log out</Button>}
             </nav>
           </SheetContent>
         </Sheet>
@@ -213,14 +212,16 @@ export default function App() {
                   </CardHeader>
                   <CardContent>
                     <p>{selectedPost.content}</p>
-                    <p className="text-sm text-muted">
-                      {selectedPost.author?.username || selectedPost.author} —{" "}
-                      {new Date(selectedPost.createdAt).toLocaleString()}
+                    <p className="text-sm text-black">
+                      {typeof selectedPost.author === "object"
+                        ? selectedPost.author.username
+                        : selectedPost.author}{" "}
+                      — {new Date(selectedPost.createdAt).toLocaleString()}
                     </p>
                   </CardContent>
                 </Card>
               ) : (
-                <p className="text-center bg-gray-500">
+                <p className="text-center text-gray-500">
                   No post for that date.
                 </p>
               )}

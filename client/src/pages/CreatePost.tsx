@@ -7,7 +7,6 @@ import React, { useState } from "react"
 import { Calendar } from "@/components/ui/calendar";
 import { useNavigate } from "react-router-dom";
 
-// Titel, beskrivning, bild -> Publicera
 export default function CreatePost() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [title, setTitle] = useState("");
@@ -20,7 +19,6 @@ export default function CreatePost() {
     const response = await fetch("/api/posts",
       {
         method: "POST",
-        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
