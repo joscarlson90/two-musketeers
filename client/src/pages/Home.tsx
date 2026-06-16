@@ -276,7 +276,6 @@ export default function App() {
           <Carousel
             opts={{
               align: "start",
-              loop: true,
             }}
             className="w-full max-w-5xl mx-auto"
           >
@@ -289,7 +288,7 @@ export default function App() {
                         <span className="text-lg font-semibold">{post.title}
                         </span>
                         <div className="flex-1">
-                          <img src={post.image} alt={post.title} loading="eager"
+                          <img src={post.image} alt={post.title} loading="lazy"
                             className="w-full object-cover h-60" />
                         </div>
                         <p className="mt-auto text-sm font-medium">
