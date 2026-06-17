@@ -262,12 +262,12 @@ export default function App() {
 
   return (
     <>
-      <header className="flex relative items-center lg:items-center lg:flex-row p-6 justify-between text-[#faf3e7] bg-[#CB3038]">
+      <header className="flex flex-col items-center lg:justify-between lg:flex-row p-6 gap-4 text-[#faf3e7] bg-[#CB3038]">
         <h1 className="lg:text-5xl text-3xl" style={{ fontFamily: "Gaegu" }}>
           MEMORY LANE
         </h1>
 
-        <div className="absolute flex items-center left-1/2 -translate-x-1/2 gap-3">
+        <div className="flex flex-wrap justify-center items-center w-full gap-3 lg:absolute lg:w-auto lg:left-1/2 lg:-translate-x-1/2">
           {user ? (
             <>
               <p className="font-semibold">Hello {user.username}!</p>
@@ -288,16 +288,20 @@ export default function App() {
         </div>
 
         <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-          <div className="flex relative ml-auto items-center gap-2">
-            <Search className="absolute left-45 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-            <Input
-              type="search"
-              className="w-52 bg-[#faf3e7] text-black"
-              placeholder="Username.."
-            />
-            <SheetTrigger className="text-[#faf3e7] hover:bg-[#faf3e7] hover:text-black rounded-3xl px-4 py-2 duration-300">
-              MENU
-            </SheetTrigger>
+          <div className="flex relative items-center gap-2">
+            <div className="flex flex-wrap justify-center items-center gap-2 lg:justify-end">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                <Input
+                  type="search"
+                  className="w-32 text-sm pl-10 sm:w-40 lg:w-50 bg-[#faf3e7] text-black"
+                  placeholder="Username.."
+                />
+              </div>
+              <SheetTrigger className="text-[#faf3e7] hover:bg-[#faf3e7] hover:text-black rounded-3xl px-4 py-2 duration-300">
+                MENU
+              </SheetTrigger>
+            </div>
           </div>
 
           <SheetContent side="right" className="bg-[#faf3e7]">
@@ -341,7 +345,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto rounded-3xl p-6 lg:p-18">
           <section className="relative z-10 px-4 lg:px-10">
             <div className="mx-auto flex flex-col lg:flex-row gap-8">
-              <Card className="rounded-3xl shadow-2xl p-4 shrink-0">
+              <Card className="rounded-3xl items-center shadow-2xl p-2 shrink-0 w-full lg:w-auto">
                 <Calendar
                   mode="single"
                   selected={date}
@@ -357,7 +361,7 @@ export default function App() {
                   onSelect={(d) => handleDateSelect(d)}
                   month={new Date(month.getFullYear(), month.getMonth() + 1)}
                   locale={enUS}
-                  className="rounded-lg"
+                  className="rounded-lg hidden lg:block"
                   captionLayout="dropdown"
                 />
               </Card>
@@ -374,7 +378,7 @@ export default function App() {
           </section>
         </div>
 
-        <section className="max-w-7xl mx-auto px-4 lg:px-10 py-20">
+        <section className="max-w-7xl mx-auto px-4 lg:px-10">
           <div className="text-center">
             <h2 className="text-4xl px-8 py-2 rounded-3xl inline-block bg-black font-bold mb-4 text-white">
               Latest Posts
@@ -392,7 +396,7 @@ export default function App() {
                 >
                   <div className="p-1">
                     <Card className="h-112 rounded-3xl">
-                      <CardContent className="flex flex-col aspect-square gap-4">
+                      <CardContent className="flex flex-col h-full gap-4">
                         <span className="text-lg font-semibold">
                           {post.title}
                         </span>
@@ -416,8 +420,8 @@ export default function App() {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <CarouselPrevious className="left-2" />
+            <CarouselNext className="right-2" />
           </Carousel>
         </section>
 

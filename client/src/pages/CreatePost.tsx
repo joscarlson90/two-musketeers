@@ -51,8 +51,8 @@ export default function CreatePost() {
   }
 
   return (
-    <div className="bg-[#CB3038] min-h-screen flex items-center justify-center gap-8">
-      <Card className="h-fit p-6 rounded-3xl">
+    <div className="bg-[#CB3038] min-h-screen flex flex-col items-center justify-center lg:flex-row gap-8">
+      <Card className="h-fit items-center p-2 rounded-3xl w-full max-w-md lg:p-6">
         <Calendar
           mode="single"
           selected={date}
@@ -61,24 +61,27 @@ export default function CreatePost() {
           className="rounded-lg"
           captionLayout="dropdown"
         />
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={setDate}
-          month={new Date(new Date().getFullYear(), new Date().getMonth() + 1)}
-          locale={enUS}
-          className="rounded-lg"
-          captionLayout="dropdown"
-        />
+        <div className="hidden lg:block">
+
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={setDate}
+            month={new Date(new Date().getFullYear(), new Date().getMonth() + 1)}
+            locale={enUS}
+            className="rounded-lg"
+            captionLayout="dropdown"
+          />
+        </div>
       </Card>
 
-      <Card className="w-150 rounded-3xl p-6">
+      <Card className="w-full rounded-3xl max-w-2xl p-6">
         <CardHeader>
-          <CardTitle className="text-center text-3xl pb-4">
+          <CardTitle className="text-center text-2xl pb-4 lg:text-3xl">
             Add a Memory
           </CardTitle>
         </CardHeader>
-        <CardContent className="font-mono px-8 pb-8">
+        <CardContent className="font-mono px-4 pb-8 lg:px-8">
           <form onSubmit={handleSubmit} className="flex flex-col gap-8">
             <Input
               type="text"
@@ -106,7 +109,7 @@ export default function CreatePost() {
                 <img
                   src={preview}
                   alt="Preview"
-                  className="w-full object-contain rounded-2xl max-h-60"
+                  className="w-full object-contain rounded-2xl max-h-46 lg:max-h-60"
                 />
               )}
             </div>
