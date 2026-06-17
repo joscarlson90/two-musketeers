@@ -14,6 +14,7 @@ export default function CreatePost() {
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const navigate = useNavigate();
+  const [inputImageName, setInputImageName] = useState("Add photo");
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] || null;
@@ -22,6 +23,9 @@ export default function CreatePost() {
       setPreview(URL.createObjectURL(file));
     } else {
       setPreview(null);
+    }
+    if (file) {
+      setInputImageName(file.name);
     }
   }
 
@@ -90,11 +94,11 @@ export default function CreatePost() {
               onChange={(e) => setContent(e.target.value)}
             />
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold">Image</label>
+              <label htmlFor="image-upload" className="block w-full rounded-3xl border border-black text-black text-center font-medium p-1.5 cursor-pointer hover:bg-[#CB3038] hover:text-white transition-colors">{inputImageName}</label>
               <Input
                 type="file"
                 accept="image/*"
-                className="bg-[#edeae3]"
+                className="bg-[#edeae3] hidden"
                 onChange={handleImageChange}
               />
               {preview && (
