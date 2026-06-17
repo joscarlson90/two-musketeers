@@ -204,13 +204,16 @@ export default function App() {
             )}
             <p className="p-2">{selectedPost.content}</p>
             <p className="p-2 text-sm italic">
-              {typeof selectedPost.author === "object"
-                ? selectedPost.author.username
-                : selectedPost.author}{" "}
+              {typeof selectedPost.author === "object" &&
+                selectedPost.author !== null
+                ? (selectedPost.author as { _id: string; username: string })
+                  .username
+                : String(selectedPost.author)}{" "}
               — {new Date(selectedPost.createdAt).toLocaleString()}
             </p>
             {user &&
               typeof selectedPost.author === "object" &&
+              selectedPost.author !== null &&
               selectedPost.author._id === user._id && (
                 <Button
                   variant="destructive"
