@@ -96,6 +96,7 @@ export default function CreatePost() {
             <div className="flex flex-col gap-2">
               <label htmlFor="image-upload" className="block w-full rounded-3xl border border-black text-black text-center font-medium p-1.5 cursor-pointer hover:bg-[#CB3038] hover:text-white transition-colors">{inputImageName}</label>
               <Input
+                id="image-upload"
                 type="file"
                 accept="image/*"
                 className="bg-[#edeae3] hidden"

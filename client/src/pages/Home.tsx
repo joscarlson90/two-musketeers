@@ -137,8 +137,10 @@ export default function App() {
       const response = await fetch(
         `https://api.unsplash.com/photos/random?query=nature&client_id=${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`,
       );
-      const data = await response.json();
-      setRandomImage(data.urls?.regular);
+      if (response.ok) {
+        const data = await response.json();
+        setRandomImage(data.urls?.regular);
+      }
     }
     getRandomDailyImage();
   }, []);
@@ -337,8 +339,8 @@ export default function App() {
         style={{ backgroundImage: `url(${heroImage})` }}
       >
         <div className="max-w-7xl mx-auto rounded-3xl p-6 lg:p-18">
-          <section className="relative z-10 px-4 lg:px-10 py-10">
-            <div className="mx-auto flex flex-col lg:flex-row items-center gap-8">
+          <section className="relative z-10 px-4 lg:px-10">
+            <div className="mx-auto flex flex-col lg:flex-row gap-8">
               <Card className="rounded-3xl shadow-2xl p-4 shrink-0">
                 <Calendar
                   mode="single"
