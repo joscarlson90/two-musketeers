@@ -341,16 +341,16 @@ export default function App() {
                   mode="single"
                   selected={date}
                   onSelect={(d) => handleDateSelect(d)}
+                  onMonthChange={setMonth}
                   locale={enUS}
                   className="rounded-lg"
                   captionLayout="dropdown"
                 />
                 <Calendar
                   mode="single"
-                  month={month}
-                  onMonthChange={setMonth}
                   selected={date}
                   onSelect={(d) => handleDateSelect(d)}
+                  month={new Date(month.getFullYear(), month.getMonth() + 1)}
                   locale={enUS}
                   className="rounded-lg"
                   captionLayout="dropdown"
