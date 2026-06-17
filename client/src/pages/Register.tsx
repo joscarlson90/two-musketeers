@@ -30,7 +30,6 @@ export default function Register() {
             }
         );
 
-
         if (!response.ok) {
             const error = await response.json();
             setError(error);
@@ -48,7 +47,7 @@ export default function Register() {
     return (
         <div className="relative flex min-h-screen items-center justify-center bg-[#CB3038] px-4">
             <div className="absolute top-24 left-1/4 z-10 -translate-x-1/2 from-[#CB3038]">
-                <img src="src/assets/images/star-vector.svg" alt="Decoration" className="absolut -top-10 -left-12 z-20 w-50 md:w-60 rotate-[-8deg]" />
+                <img src="src/assets/images/star-vector.svg" alt="Decoration" style={{ animationDuration: "4s" }} className="animate-pulse -top-10 -left-12 z-20 w-55 md:w-66 rotate-[-10deg]" />
                 <p
                     className="absolute inset-0 flex items-center justify-center md:text-2xl"
                     style={{ fontFamily: "Gaegu" }}

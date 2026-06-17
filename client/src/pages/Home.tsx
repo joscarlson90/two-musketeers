@@ -23,7 +23,7 @@ interface Post {
   _id: string;
   title: string;
   content: string;
-  author: { username: string } | string;
+  author: { _id: string; username: string } | string;
   createdAt: string;
   postDate: string;
   image?: string;
@@ -49,7 +49,8 @@ const mockedPosts: MockedPost[] = [
     title: "Summer in Greece",
     content:
       "A beautiful evening by the sea with friends, great food, and a sunset we'll never forget.",
-    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+    image:
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80",
     author: "Josefine",
   },
   {
@@ -66,7 +67,8 @@ const mockedPosts: MockedPost[] = [
     title: "Midsummer Celebration",
     content:
       "A day filled with laughter, dancing, strawberries, and memories shared with family.",
-    image: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07",
+    image:
+      "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=600&q=80",
     author: "Emma",
   },
   {
@@ -74,7 +76,8 @@ const mockedPosts: MockedPost[] = [
     title: "Mountain Adventure",
     content:
       "A long hike through breathtaking landscapes, ending with a spectacular view at sunset.",
-    image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+    image:
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=600&q=80",
     author: "Simon",
   },
   {
@@ -82,7 +85,8 @@ const mockedPosts: MockedPost[] = [
     title: "Grandma's Garden",
     content:
       "The scent of flowers, homemade pastries, and warm summer afternoons from childhood.",
-    image: "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735",
+    image:
+      "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=600&q=80",
     author: "Maria",
   },
   {
@@ -90,7 +94,8 @@ const mockedPosts: MockedPost[] = [
     title: "Road Trip Across Sweden",
     content:
       "Thousands of kilometers, countless stops, and unforgettable moments along the way.",
-    image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429",
+    image:
+      "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=600&q=80",
     author: "Sigge",
   },
 ];
@@ -101,6 +106,7 @@ export default function App() {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [dateSelected, setDateSelected] = useState(false);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const [month, setMonth] = useState(new Date());
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [randomImage, setRandomImage] = useState(
     "https://plus.unsplash.com/premium_photo-1761928313247-03dd441591d6?q=80&w=770&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -136,6 +142,16 @@ export default function App() {
     }
     getRandomDailyImage();
   }, []);
+
+  useEffect(() => {
+    if (posts.length > 0) {
+      const today = new Date();
+      const match = posts.find((p) => isSameDay(new Date(p.postDate), today));
+      setDate(today);
+      setDateSelected(true);
+      setSelectedPost(match ?? null);
+    }
+  }, [posts]);
 
   const navigate = useNavigate();
 
@@ -183,7 +199,7 @@ export default function App() {
               <img
                 src={selectedPost.image}
                 alt={selectedPost.title}
-                className="w-full object-cover rounded-2xl mb-4"
+                className="w-full object-contain rounded-2xl mb-4"
               />
             )}
             <p className="p-2">{selectedPost.content}</p>
@@ -193,13 +209,16 @@ export default function App() {
                 : selectedPost.author}{" "}
               — {new Date(selectedPost.createdAt).toLocaleString()}
             </p>
-
-            <Button
-              variant="destructive"
-              onClick={() => handleDeletePost(selectedPost._id)}
-            >
-              Delete
-            </Button>
+            {user &&
+              typeof selectedPost.author === "object" &&
+              selectedPost.author._id === user._id && (
+                <Button
+                  variant="destructive"
+                  onClick={() => handleDeletePost(selectedPost._id)}
+                >
+                  Delete
+                </Button>
+              )}
           </CardContent>
         </Card>
       );
@@ -328,20 +347,15 @@ export default function App() {
                 />
                 <Calendar
                   mode="single"
+                  month={month}
+                  onMonthChange={setMonth}
                   selected={date}
                   onSelect={(d) => handleDateSelect(d)}
-                  month={
-                    new Date(
-                      new Date().getFullYear(),
-                      new Date().getMonth() + 1,
-                    )
-                  }
                   locale={enUS}
                   className="rounded-lg"
                   captionLayout="dropdown"
                 />
               </Card>
-
               <motion.div
                 className="w-full lg:max-w-4xl"
                 initial={{ scale: 0.97 }}
@@ -381,6 +395,7 @@ export default function App() {
                           <img
                             src={post.image}
                             alt={post.title}
+                            loading="lazy"
                             className="w-full object-cover h-60"
                           />
                         </div>
