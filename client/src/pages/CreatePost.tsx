@@ -84,11 +84,11 @@ export default function CreatePost() {
               type="text"
               placeholder="Title"
               value={title}
-              className="text-sm bg-[#edeae3]"
+              className="text-sm border border-slate-600"
               onChange={(e) => setTitle(e.target.value)}
             />
             <Textarea
-              className="text-sm min-h-40 bg-[#edeae3] p-4 rounded-3xl"
+              className="text-sm min-h-40 p-4 rounded-3xl border border-slate-600"
               placeholder="Description"
               value={content}
               onChange={(e) => setContent(e.target.value)}
