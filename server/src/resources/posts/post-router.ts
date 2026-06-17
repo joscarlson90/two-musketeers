@@ -1,10 +1,41 @@
+import busboy from "busboy";
 import express from "express";
+import fs from "fs";
 import mongoose from "mongoose";
+import path from "path";
 import { PostModel } from "./post-model.ts";
 
 const postRouter = express.Router();
 
 const toObjectId = (id: string) => new mongoose.Types.ObjectId(id);
+
+const saveUploadedFile = async (
+  stream: NodeJS.ReadableStream,
+  filename: string,
+  mimeType: string,
+): Promise<string> => {
+  const uploadDir = path.join(process.cwd(), "uploads");
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+
+  const extMap: Record<string, string> = {
+    "image/jpeg": ".jpg",
+    "image/png": ".png",
+    "image/gif": ".gif",
+    "image/webp": ".webp",
+  };
+  const ext = extMap[mimeType] || path.extname(filename) || ".jpg";
+  const savedFilename = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}${ext}`;
+  const filepath = path.join(uploadDir, savedFilename);
+
+  return new Promise((resolve, reject) => {
+    const writeStream = fs.createWriteStream(filepath);
+    stream.pipe(writeStream);
+    writeStream.on("finish", () => resolve(`/uploads/${savedFilename}`));
+    writeStream.on("error", reject);
+  });
+};
 
 postRouter.get("/", async (req, res) => {
   try {
@@ -32,35 +63,113 @@ postRouter.get("/:id", async (req, res) => {
 });
 
 postRouter.post("/", async (req, res) => {
-  const { title, content } = req.body;
   const userId = req.cookies.userId;
 
   if (!userId) {
     return res.status(401).json("Unauthorized");
   }
 
-  if (!title) {
-    return res.status(400).json("Title is required");
-  }
-  if (!content) {
-    return res.status(400).json("Content is required");
-  }
+  if (req.is("application/json")) {
+    const { title, content, postDate } = req.body;
 
-  try {
-    const newPost = new PostModel({
-      title,
-      content,
-      author: toObjectId(userId),
-    });
+    if (!title) return res.status(400).json("Title is required");
+    if (!content) return res.status(400).json("Content is required");
 
-    await newPost.save();
-    return res.status(201).json(newPost);
-  } catch (error) {
-    if (error instanceof Error && error.name === "ValidationError") {
-      return res.status(400).json(error.message);
+    if (postDate) {
+      const start = new Date(postDate);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(postDate);
+      end.setHours(23, 59, 59, 999);
+
+      const existing = await PostModel.findOne({
+        postDate: { $gte: start, $lte: end },
+      } as any);
+
+      if (existing) {
+        return res.status(409).json("A post already exists for this date.");
+      }
     }
-    return res.status(400).json({ message: "Failed to create post", error });
+
+    try {
+      const newPost = new PostModel({
+        title,
+        content,
+        author: toObjectId(userId),
+        postDate,
+      });
+
+      await newPost.save();
+      return res.status(201).json(newPost);
+    } catch (error) {
+      if (error instanceof Error && error.name === "ValidationError") {
+        return res.status(400).json(error.message);
+      }
+      return res.status(400).json({ message: "Failed to create post", error });
+    }
   }
+
+  const bb = busboy({ headers: req.headers });
+  const fields: any = {};
+  let imagePromise: Promise<string> | undefined;
+  let imageUrl: string | undefined;
+
+  bb.on("file", async (fieldname, file, info) => {
+    console.log("File received:", fieldname, info.filename);
+    if (fieldname === "image") {
+      imagePromise = saveUploadedFile(file, info.filename, info.mimeType);
+    }
+  });
+
+  bb.on("field", (fieldname, val) => {
+    fields[fieldname] = val;
+  });
+
+  bb.on("close", async () => {
+    const { title, content, postDate } = fields;
+    const imageUrl = imagePromise ? await imagePromise : undefined;
+
+    if (!title) return res.status(400).json("Title is required");
+    if (!content) return res.status(400).json("Content is required");
+
+    if (postDate) {
+      const start = new Date(postDate);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(postDate);
+      end.setHours(23, 59, 59, 999);
+
+      const existing = await PostModel.findOne({
+        postDate: { $gte: start, $lte: end },
+      } as any);
+
+      if (existing) {
+        return res.status(409).json("A post already exists for this date.");
+      }
+    }
+
+    try {
+      const newPost = new PostModel({
+        title,
+        content,
+        image: imageUrl,
+        author: toObjectId(userId),
+        postDate,
+      });
+
+      await newPost.save();
+      return res.status(201).json(newPost);
+    } catch (error) {
+      if (error instanceof Error && error.name === "ValidationError") {
+        return res.status(400).json(error.message);
+      }
+      return res.status(400).json({ message: "Failed to create post", error });
+    }
+  });
+
+  bb.on("error", (error) => {
+    return res.status(500).json({ message: "Upload error", error });
+  });
+
+  req.pipe(bb);
 });
 
 postRouter.put("/:id", async (req, res) => {
