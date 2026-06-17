@@ -37,7 +37,7 @@ export default function Login() {
     return (
         <div className="relative flex min-h-screen items-center justify-center bg-[#CB3038] px-4">
             <div className="absolute top-25 left-1/4 z-10 -translate-x-1/2 from-[#CB3038]">
-                <img src="src/assets/images/star-vector.svg" alt="Decoration" className="absolut -top-10 -left-12 z-20 w-50 md:w-60 rotate-[-8deg]" />
+                <img src="src/assets/images/star-vector.svg" alt="Decoration" style={{ animationDuration: "4s" }} className="animate-pulse absolut -top-10 -left-12 z-20 w-50 md:w-66 rotate-[-8deg]" />
                 <p
                     className="absolute inset-0 flex items-center justify-center md:text-2xl"
                     style={{ fontFamily: "Gaegu" }}

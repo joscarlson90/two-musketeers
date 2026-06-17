@@ -70,9 +70,9 @@ export default function CreatePost() {
 
         <CardContent className="font-mono px-8 pb-8">
           <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-            <Input type="text" placeholder="Title" value={title} className="text-sm bg-[#edeae3]" onChange={(e) => setTitle(e.target.value)} />
+            <Input type="text" placeholder="Title" value={title} className="text-sm border border-slate-600" onChange={(e) => setTitle(e.target.value)} />
 
-            <Textarea className="text-sm min-h-40 bg-[#edeae3] p-4 rounded-3xl"
+            <Textarea className="text-sm min-h-40 border  border-slate-600 p-4 rounded-3xl"
               placeholder="Description"
               value={content}
               onChange={(e) => setContent(e.target.value)}
