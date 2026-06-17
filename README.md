@@ -1,71 +1,56 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/ryQlvbA2)
+# Memory Lane :camera:
 
-# User Based Content
+Memory Lane is a social platform where users can save and share their memories on a specific day!
 
-## Beskrivning
+#### Features
 
-Ni ska skapa en användarbaserad plattform där en användare har möjligheten att registrera sig, logga in och skapa innehåll (inlägg). Vad för innehåll som användaren kan skapa är valfritt med det ska vara baserat på en resurs i erat Express-API. Användardatan ska även den baseras på en egen resurs (användare), där lösenordet är krypterat. Samtligt innehåll som skapas, förändras eller tas bort ska sparas till en MongoDB databas. Innehållet som en användare skapar får endast lov att ändras eller tas bort av skaparen. Plattformen ska innehålla en klientapplikation där samtliga operationer som nämnts ovan är genomförbara. Dessutom ska innehållet på något sätt presenteras i gränssnittet och vara synligt föra alla - även om man inte är inloggad.
+- Register a new account
+- Log in and log out
+- Create posts connected to the logged-in user
+- View posts created by users
+- Edit and delete your own posts
+- Store all content in MongoDB
 
-## Kodbas
+#### Technologies
 
-Den här kodbasen är indelad i en [klientmapp](./client/) och en [servermapp](./server/).
-Servern har två miljöer konfigurerade, en för utveckling och en för testning.
+- React
+- TypeScript
+- Express
+- MongoDB
+- Mongoose
+- Tailwind CSS
+- Shadcn
 
-Servern innehåller några start-filer som kan vara bra att känna till:
+#### Installation
 
-- `server.ts` - startfil för utvecklingsmiljön.
-- `app.ts` - innehåller all serverlogik.
-- `index.ts` - exports till testmiljön.
+Client:
 
-Här är en lista på de olika skripten som kan köras i terminalen.
+```bash
+cd client
+npm install
+```
 
-Navigera först till server mappen -`cd server` och sedan:
+Server:
 
-- `npm install` - Installerar alla NodeJS moduler (körs en gång).
-- `npm run update` - Uppdaterar testerna och behöver köras om läraren har ändrat dom.
-- `npm run dev` - Startar utvecklingsmiljön.
-- `npm test` - Startar testmiljön så du kan jobba med kravlistan.
-
-Se nedan för den struktur som user & post ska ha. Det är okej att lägga till extra fält men dessa måste då vara valfria så att testerna går igenom.
-
-**User**
-
-- username: string
-- password: string
-- isAdmin: boolean
-
-**Post**
-
-- title: string
-- content: string
-- author: ObjectId
-
-## Bedömning
-
-För att bli godkänd på den här uppgiften MÅSTE ni använda GIT och GitHub. Inlämningen sker som vanligt via läroplattformen där ni lämnar in er projektmapp som en zip-fil. I projektmappen ska det finnas (utöver all kod) en README.md fil som innehåller en titel, beskrivning av uppgiften och vad som krävs för att bygga och starta projektet.
-
-En muntligt presentation ska genomföras per grupp där ni visar vad ni har skapat. Samtlig funktionalitet ska demas och kommer att bockas av och Godkännas under presentationen. Upplägg och innehåll i övrigt är valfritt så länge ni håller er till ämnet. Ca 10-15 min per grupp.
-
-Para ihop er i grupp om två - ni väljer själva vilka ni jobbar med.
+```bash
+cd server
+npm install
+```
 
 **Krav för godkänt:**
 
 - [x] Git & GitHub har använts
-- [ ] Projektmappen innehåller en README.md fil (läs ovan för mer info)
-- [ ] Uppgiften lämnas in i tid!
+- [x] Projektmappen innehåller en README.md fil (läs ovan för mer info)
+- [x] Uppgiften lämnas in i tid!
 - [x] Det ska finnas minst två stycken resurser (users & posts)
 - [x] Det ska gå att registrera sig, logga in och skapa innehåll som är kopplat till inloggad användare.
 - [x] Endast den inloggade användaren får lov att utföra C_UD actions på sitt innehåll.
 - [x] Innehållet ska vara synligt för alla besökare på sidan.
-- [ ] Projektet ska ha stöd för att ladda upp och visa bilder som en del av innehållet.
+- [x] Projektet ska ha stöd för att ladda upp och visa bilder som en del av innehållet.
 - [x] Allt innehåll ska sparas i en MongoDB databas.
 
-_Gjorda krav ska kryssar i_
+[View the project on Github ](https://github.com/plugga-tech/api-user-content-the-two-musketeers)
 
-**Krav för väl godkänt:**
+#### Authors
 
-- [ ] Alla punkter för godkänt är uppfyllda
-- [ ] Det ska finnas en adminroll i systemet där man som inloggad admin har rättigheten att utföra CRUD operationer på allt innehåll.
-- [ ] Admins ska ha tillgång till ett gränssnitt som listar alla användare och deras roller. En admin ska från gränssnittet kunna ta bort användare eller ändra dess roll.
-
-_Gjorda krav ska kryssar i_
+Josefine Carlson & Love Tampöld
