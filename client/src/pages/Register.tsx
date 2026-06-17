@@ -30,7 +30,6 @@ export default function Register() {
             }
         );
 
-
         if (!response.ok) {
             const error = await response.json();
             setError(error);

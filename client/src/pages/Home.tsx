@@ -91,11 +91,11 @@ const mockedPosts: MockedPost[] = [{
   author: "Sigge",
 }]
 
-
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const [month, setMonth] = useState(new Date());
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [randomImage, setRandomImage] = useState("https://plus.unsplash.com/premium_photo-1761928313247-03dd441591d6?q=80&w=770&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
 
@@ -221,6 +221,8 @@ export default function App() {
               <Card className="rounded-3xl shadow-2xl p-4 shrink-0">
                 <Calendar
                   mode="single"
+                  month={month}
+                  onMonthChange={setMonth}
                   selected={date}
                   onSelect={setDate}
                   locale={enUS}
@@ -232,8 +234,8 @@ export default function App() {
                   selected={date}
                   onSelect={setDate}
                   month={new Date(
-                    new Date().getFullYear(),
-                    new Date().getMonth() + 1
+                    month.getFullYear(),
+                    month.getMonth() + 1
                   )}
                   locale={enUS}
                   className="rounded-lg"
