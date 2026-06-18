@@ -188,6 +188,7 @@ export default function App() {
   }
 
   const postDates = posts.map((post) => new Date(post.postDate));
+  const allPosts = [...posts, ...mockedPosts];
 
   const renderCalendarCard = () => {
     if (selectedPost) {
@@ -392,7 +393,7 @@ export default function App() {
             className="w-full max-w-5xl mx-auto"
           >
             <CarouselContent>
-              {mockedPosts.map((post) => (
+              {allPosts.map((post) => (
                 <CarouselItem
                   key={post._id}
                   className="basis-full sm:basis-1/2 lg:basis-1/3"
@@ -415,7 +416,7 @@ export default function App() {
                           {post.content}
                         </p>
                         <p className="mt-auto text-sm font-semibold italic">
-                          {post.author}
+                          {typeof post.author === "object" ? post.author.username : post.author}
                         </p>
                       </CardContent>
                     </Card>
