@@ -420,8 +420,8 @@ export default function App() {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="left-2" />
-            <CarouselNext className="right-2" />
+            <CarouselPrevious className="left-2 md:-left-12" />
+            <CarouselNext className="right-2 md:-right-12" />
           </Carousel>
         </section>
 
