@@ -150,7 +150,7 @@ export default function App() {
       const today = new Date();
       const match = posts.find((p) => isSameDay(new Date(p.postDate), today));
       setDate(today);
-      setDateSelected(true);
+      setDateSelected(match !== undefined);
       setSelectedPost(match ?? null);
     }
   }, [posts]);
@@ -186,6 +186,8 @@ export default function App() {
       setDateSelected(false);
     }
   }
+
+  const postDates = posts.map((post) => new Date(post.postDate));
 
   const renderCalendarCard = () => {
     if (selectedPost) {
@@ -351,6 +353,7 @@ export default function App() {
                   selected={date}
                   onSelect={(d) => handleDateSelect(d)}
                   onMonthChange={setMonth}
+                  modifiers={{ hasPost: postDates, }} modifiersClassNames={{ hasPost: "border-2 bg-[#CB3038] rounded-full text-white" }}
                   locale={enUS}
                   className="rounded-lg"
                   captionLayout="dropdown"
